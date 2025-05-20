@@ -1,0 +1,45 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Add Label State",
+                "description": "Create a sensor that is the minimum or maximum of another sensor, resetttable via an action.",
+                "data": {
+                    "entity_id": "Input entity",
+                    "name": "Name",
+                    "type": "Statistic characteristic"
+                }
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "data": {
+                    "entity_id": "Input entity",
+                    "type": "Statistic characteristic"
+                }
+            }
+        }
+    },
+    "selector": {
+        "type": {
+            "options": {
+                "min": "Minimum",
+                "max": "Maximum"
+            }
+        }
+    },
+    "services": {
+        "reset": {
+            "name": "Reset",
+            "description": "Reset a Label State sensor to the current input entity value.",
+            "fields": {
+                "entity_id": {
+                    "name": "Entity",
+                    "description": "Select the Label State sensor."
+                }
+            }
+        }
+    }
+}

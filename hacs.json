@@ -1,0 +1,7 @@
+{
+    "name": "Label State",
+    "filename": "label_state.zip",
+    "hide_default_branch": true,
+    "homeassistant": "2025.3.0",
+    "zip_release": true
+}

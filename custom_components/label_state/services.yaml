@@ -1,0 +1,7 @@
+reset:
+  target:
+    entity:
+      integration: label_state
+      domain: sensor
+    device:
+      integration: label_state
