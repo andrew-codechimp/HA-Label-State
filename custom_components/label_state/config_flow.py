@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Callable, Coroutine, Mapping
 from typing import Any, cast
 
 import voluptuous as vol
@@ -58,10 +58,50 @@ LABEL_TYPES = [
     "state",
 ]
 
+
+def _validate_upper_or_lower(options: dict[str, Any]) -> None:
+    """Validate upper or lower limit."""
+    upper_limit = options.get(CONF_UPPER_LIMIT)
+    lower_limit = options.get(CONF_LOWER_LIMIT)
+
+    if upper_limit is None and lower_limit is None:
+        raise vol.Invalid("An upper or lower limit must be set")
+
+
+def validate_user_input(
+    label_type: str,
+) -> Callable[
+    [SchemaCommonFlowHandler, dict[str, Any]],
+    Coroutine[Any, Any, dict[str, Any]],
+]:
+    """Do post validation of user input.
+
+    For numeric state: Validate an upper or lower limit is set.
+    For all domaines: Set label type.
+    """
+
+    async def _validate_user_input(
+        _: SchemaCommonFlowHandler,
+        user_input: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Validate based on label type and add label type to user input."""
+        if label_type == "numeric_state":
+            _validate_upper_or_lower(user_input)
+        return {"label_type": label_type} | user_input
+
+    return _validate_user_input
+
+
 CONFIG_FLOW = {
     "user": SchemaFlowMenuStep(LABEL_TYPES),
-    "numeric_state": SchemaFlowFormStep(CONFIG_SCHEMA_NUMERIC_STATE),
-    "state": SchemaFlowFormStep(CONFIG_SCHEMA_STATE),
+    "numeric_state": SchemaFlowFormStep(
+        CONFIG_SCHEMA_NUMERIC_STATE,
+        validate_user_input=validate_user_input("numeric_state"),
+    ),
+    "state": SchemaFlowFormStep(
+        CONFIG_SCHEMA_STATE,
+        validate_user_input=validate_user_input("state"),
+    ),
 }
 
 
@@ -72,8 +112,13 @@ async def choose_options_step(options: dict[str, Any]) -> str:
 
 OPTIONS_FLOW = {
     "init": SchemaFlowFormStep(next_step=choose_options_step),
-    "numeric_state": SchemaFlowFormStep(OPTIONS_SCHEMA_NUMERIC_STATE),
-    "state": SchemaFlowFormStep(OPTIONS_SCHEMA_STATE),
+    "numeric_state": SchemaFlowFormStep(
+        OPTIONS_SCHEMA_NUMERIC_STATE,
+        validate_user_input=validate_user_input("numeric_state"),
+    ),
+    "state": SchemaFlowFormStep(
+        OPTIONS_SCHEMA_STATE, validate_user_input=validate_user_input("state")
+    ),
 }
 
 
