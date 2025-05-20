@@ -78,7 +78,7 @@ OPTIONS_FLOW = {
 
 
 class ConfigFlowHandler(SchemaConfigFlowHandler, domain=DOMAIN):
-    """Handle a config or options flow for Min/Max."""
+    """Handle a config or options flow for Label State."""
 
     config_flow = CONFIG_FLOW
     options_flow = OPTIONS_FLOW
