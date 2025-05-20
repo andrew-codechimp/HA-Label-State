@@ -1,7 +1,7 @@
 """Custom integration to provide label_state helpers for Home Assistant.
 
 For more details about this integration, please refer to
-https://github.com/andrew-codechimp/HA-Periodic-Min-Max
+https://github.com/andrew-codechimp/HA-Label-State
 """
 
 from __future__ import annotations

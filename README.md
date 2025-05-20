@@ -1,4 +1,4 @@
-# HA-Periodic-Min-Max
+# HA-Label-State
 
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
@@ -8,54 +8,14 @@
 
 Label State Helpers for Home Assistant
 
-The helpers record the minimum or maximum of a sensor until manually reset via the reset action. The value is maintained through HA restarts.
+The helpers does something.
 
-A `last_modified` attribute is available to check when the min or max was really changed, this attribute does not update on HA restarts giving you an accurate indication on when the new min or max was hit. This can be useful for using as a trigger on an automation or for comparing via a template for a daily update. The attribute is in UTC.
-
-## Example use cases
-
-- Record the maximum temperature today, resetting at midnight via an automation.
-- Record the peak solar energy produced ever, reset when you upgrade your solar installation.
-
-_Please :star: this repo if you find it useful_  
-_If you want to show your support please_
-
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png)](https://www.buymeacoffee.com/codechimp)
-
-![Helper Creation](https://raw.githubusercontent.com/andrew-codechimp/ha-label-state/main/images/helper-create.png "Helper Creation")
-
-![Reset Action](https://raw.githubusercontent.com/andrew-codechimp/ha-label-state/main/images/action-reset.png "Reset Action")
-
-## Tips
-
-If you have many sensors you want to reset daily, create a label called daily reset, add the label to each sensor you want resetting, then create one automation that resets all sensors with that label at midnight.
-
-```
-alias: Periodic Reset Daily at Midnight
-description: ""
-triggers:
-  - trigger: time
-    at: "00:00:00"
-conditions: []
-actions:
-  - action: label_state.reset
-    target:
-      label_id: daily_reset
-    data: {}
-mode: single
-```
-
-To tell whether a new min or max has been achieved in the last 24 hours use this template
-
-```
-{{ (utcnow() - as_datetime(state_attr("sensor.my_sensor", "last_modified"))).total_seconds() < 86400 }}
-```
 
 ## Installation
 
 ### HACS
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=andrew-codechimp&repository=HA-Periodic-Min-Max&category=Integration)
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=andrew-codechimp&repository=HA-Label-State&category=Integration)
 
 Restart Home Assistant
 
@@ -103,18 +63,18 @@ Label State will automatically pull in latest changes to translations every day 
 
 **Adding a new language**
 
-Create an [Issue](https://github.com/andrew-codechimp/HA-Periodic-Min-Max/issues/) requesting a new language. We will do the necessary work to add the new translation to the integration and Crowdin site, when it's ready for you to contribute we'll comment on the issue you raised.
+Create an [Issue](https://github.com/andrew-codechimp/HA-Label-State/issues/) requesting a new language. We will do the necessary work to add the new translation to the integration and Crowdin site, when it's ready for you to contribute we'll comment on the issue you raised.
 
 </details>
 
 ---
 
-[commits-shield]: https://img.shields.io/github/commit-activity/y/andrew-codechimp/HA-Periodic-Min-Max.svg?style=for-the-badge
-[commits]: https://github.com/andrew-codechimp/HA-Periodic-Min-Max/commits/main
+[commits-shield]: https://img.shields.io/github/commit-activity/y/andrew-codechimp/HA-Label-State.svg?style=for-the-badge
+[commits]: https://github.com/andrew-codechimp/HA-Label-State/commits/main
 [hacs]: https://github.com/hacs/integration
 [hacsbadge]: https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge
 [exampleimg]: example.png
-[license-shield]: https://img.shields.io/github/license/andrew-codechimp/HA-Periodic-Min-Max.svg?style=for-the-badge
-[releases-shield]: https://img.shields.io/github/release/andrew-codechimp/HA-Periodic-Min-Max.svg?style=for-the-badge
-[releases]: https://github.com/andrew-codechimp/HA-Periodic-Min-Max/releases
-[download-latest-shield]: https://img.shields.io/github/downloads/andrew-codechimp/HA-Periodic-Min-Max/latest/total?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/andrew-codechimp/HA-Label-State.svg?style=for-the-badge
+[releases-shield]: https://img.shields.io/github/release/andrew-codechimp/HA-Label-State.svg?style=for-the-badge
+[releases]: https://github.com/andrew-codechimp/HA-Label-State/releases
+[download-latest-shield]: https://img.shields.io/github/downloads/andrew-codechimp/HA-Label-State/latest/total?style=for-the-badge

@@ -9,14 +9,14 @@ classifiers = [
   "Programming Language :: Python :: 3",
 ]
 description = "HA-Label-State - Label State Helpers for Home Assistant"
-documentation = "https://github.com/andrew-codechimp/HA-Periodic-Min-Max"
-homepage = "https://github.com/andrew-codechimp/HA-Periodic-Min-Max"
+documentation = "https://github.com/andrew-codechimp/HA-Label-State"
+homepage = "https://github.com/andrew-codechimp/HA-Label-State"
 license = "MIT"
 maintainers = ["Andrew Jackson <andrew@codechimp.org>"]
-name = "HA-Periodic-Min-Max"
+name = "HA-Label-State"
 packages = []
 readme = "README.md"
-repository = "https://github.com/andrew-codechimp/HA-Periodic-Min-Max"
+repository = "https://github.com/andrew-codechimp/HA-Label-State"
 version = "0.0.0"
 
 [tool.poetry.dependencies]
@@ -30,8 +30,8 @@ pylint = "3.3.7"
 ruff = "0.11.10"
 
 [tool.poetry.urls]
-"Bug Tracker" = "https://github.com/andrew-codechimp/HA-Periodic-Min-Max/issues"
-Changelog = "https://github.com/andrew-codechimp/HA-Periodic-Min-Max/releases"
+"Bug Tracker" = "https://github.com/andrew-codechimp/HA-Label-State/issues"
+Changelog = "https://github.com/andrew-codechimp/HA-Label-State/releases"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
