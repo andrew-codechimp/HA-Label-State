@@ -66,7 +66,7 @@ CONFIG_FLOW = {
 
 
 async def choose_options_step(options: dict[str, Any]) -> str:
-    """Return next step_id for options flow according to template_type."""
+    """Return next step_id for options flow according to label_type."""
     return cast(str, options["label_type"])
 
 
