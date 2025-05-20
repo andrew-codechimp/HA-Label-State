@@ -3,11 +3,33 @@
         "step": {
             "user": {
                 "title": "Add Label State",
-                "description": "Create a sensor that is the minimum or maximum of another sensor, resetttable via an action.",
+                "description": "Create a binary sensor that is true if any sensor with a label meets the criteria.",
+                "menu_options": {
+                    "numeric_state": "Numeric state",
+                    "state": "State"
+                }
+            },
+            "numeric_state": {
+                "title": "Add Label State",
+                "description": "Create a binary sensor that is true if any sensor with a label meets the criteria.",
                 "data": {
-                    "entity_id": "Input entity",
+                    "label": "Label",
                     "name": "Name",
-                    "type": "Statistic characteristic"
+                    "lower_limit": "Lower limit",
+                    "upper_limit": "Upper limit"
+                },
+                "data_description": {
+                    "lower_limit": "Above",
+                    "upper_limit": "Below"
+                }
+            },
+            "state": {
+                "title": "Add Label State",
+                "description": "Create a binary sensor that is true if any sensor with a label meets the criteria.",
+                "data": {
+                    "label": "Label",
+                    "name": "Name",
+                    "state": "State"
                 }
             }
         }

@@ -22,6 +22,9 @@ CONFIG_VERSION = 1
 
 PLATFORMS = [Platform.SENSOR]
 
-CONF_ENTITY_ID = "entity_id"
+CONF_LABEL = "label"
+CONF_STATE = "state"
+CONF_LOWER_LIMIT = "lower_limit"
+CONF_UPPER_LIMIT = "upper_limit"
 
 ATTR_LAST_MODIFIED = "last_modified"

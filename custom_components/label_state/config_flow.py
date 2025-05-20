@@ -6,49 +6,74 @@ from collections.abc import Mapping
 from typing import Any, cast
 
 import voluptuous as vol
-from homeassistant.components.input_number import DOMAIN as INPUT_NUMBER_DOMAIN
-from homeassistant.components.number import DOMAIN as NUMBER_DOMAIN
-from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
 from homeassistant.const import CONF_TYPE
 from homeassistant.helpers import selector
 from homeassistant.helpers.schema_config_entry_flow import (
+    SchemaCommonFlowHandler,
     SchemaConfigFlowHandler,
     SchemaFlowFormStep,
+    SchemaFlowMenuStep,
 )
 
-from .const import CONF_ENTITY_ID, DOMAIN
+from .const import CONF_LABEL, CONF_LOWER_LIMIT, CONF_STATE, CONF_UPPER_LIMIT, DOMAIN
 
-_STATISTIC_MEASURES = ["min", "max"]
-
-
-OPTIONS_SCHEMA = vol.Schema(
+OPTIONS_SCHEMA_NUMERIC_STATE = vol.Schema(
     {
-        vol.Required(CONF_ENTITY_ID): selector.EntitySelector(
-            selector.EntitySelectorConfig(
-                domain=[SENSOR_DOMAIN, NUMBER_DOMAIN, INPUT_NUMBER_DOMAIN],
-                multiple=False,
+        vol.Required(CONF_LABEL): selector.LabelSelector(),
+        vol.Optional(CONF_LOWER_LIMIT): selector.NumberSelector(
+            selector.NumberSelectorConfig(
+                mode=selector.NumberSelectorMode.BOX,
             ),
         ),
-        vol.Required(CONF_TYPE): selector.SelectSelector(
-            selector.SelectSelectorConfig(
-                options=_STATISTIC_MEASURES, translation_key=CONF_TYPE
+        vol.Optional(CONF_UPPER_LIMIT): selector.NumberSelector(
+            selector.NumberSelectorConfig(
+                mode=selector.NumberSelectorMode.BOX,
             ),
         ),
     }
 )
 
-CONFIG_SCHEMA = vol.Schema(
+OPTIONS_SCHEMA_STATE = vol.Schema(
+    {
+        vol.Required(CONF_LABEL): selector.LabelSelector(),
+        vol.Required(CONF_STATE): selector.TextSelector(),
+    }
+)
+
+CONFIG_SCHEMA_NUMERIC_STATE = vol.Schema(
     {
         vol.Required("name"): selector.TextSelector(),
     }
-).extend(OPTIONS_SCHEMA.schema)
+).extend(OPTIONS_SCHEMA_NUMERIC_STATE.schema)
+
+CONFIG_SCHEMA_STATE = vol.Schema(
+    {
+        vol.Required("name"): selector.TextSelector(),
+    }
+).extend(OPTIONS_SCHEMA_STATE.schema)
+
+
+LABEL_TYPES = [
+    "numeric_state",
+    "state",
+]
 
 CONFIG_FLOW = {
-    "user": SchemaFlowFormStep(CONFIG_SCHEMA),
+    "user": SchemaFlowMenuStep(LABEL_TYPES),
+    "numeric_state": SchemaFlowFormStep(CONFIG_SCHEMA_NUMERIC_STATE),
+    "state": SchemaFlowFormStep(CONFIG_SCHEMA_STATE),
 }
 
+
+async def choose_options_step(options: dict[str, Any]) -> str:
+    """Return next step_id for options flow according to template_type."""
+    return cast(str, options["label_type"])
+
+
 OPTIONS_FLOW = {
-    "init": SchemaFlowFormStep(OPTIONS_SCHEMA),
+    "init": SchemaFlowFormStep(next_step=choose_options_step),
+    "numeric_state": SchemaFlowFormStep(OPTIONS_SCHEMA_NUMERIC_STATE),
+    "state": SchemaFlowFormStep(OPTIONS_SCHEMA_STATE),
 }
 
 
