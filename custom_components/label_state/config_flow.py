@@ -94,7 +94,7 @@ def _validate_from_or_to(options: dict[str, Any]) -> None:
     state_to = options.get(CONF_STATE_TO)
 
     if state_from is None and state_to is None:
-        raise vol.Invalid("An from or to must be specified")
+        raise vol.Invalid("A from or to must be specified")
 
 
 def validate_user_input(
