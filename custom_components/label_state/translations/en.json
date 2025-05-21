@@ -1,5 +1,9 @@
 {
     "config": {
+        "error": {
+            "from_or_to_not_specified": "A from or to must be specified.",
+            "upper_or_lower_not_specified": "An upper or lower limit must be set."
+        },
         "step": {
             "user": {
                 "title": "Label State",
@@ -36,6 +40,10 @@
         }
     },
     "options": {
+        "error": {
+            "from_or_to_not_specified": "A from or to must be specified.",
+            "upper_or_lower_not_specified": "An upper or lower limit must be set."
+        },
         "step": {
             "numeric_state": {
                 "title": "Label State",
@@ -57,26 +65,6 @@
                     "label": "Label",
                     "state_from": "From",
                     "state_to": "To"
-                }
-            }
-        }
-    },
-    "selector": {
-        "type": {
-            "options": {
-                "min": "Minimum",
-                "max": "Maximum"
-            }
-        }
-    },
-    "services": {
-        "reset": {
-            "name": "Reset",
-            "description": "Reset a Label State sensor to the current input entity value.",
-            "fields": {
-                "entity_id": {
-                    "name": "Entity",
-                    "description": "Select the Label State sensor."
                 }
             }
         }

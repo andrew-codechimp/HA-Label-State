@@ -11,6 +11,7 @@ from homeassistant.helpers import selector
 from homeassistant.helpers.schema_config_entry_flow import (
     SchemaCommonFlowHandler,
     SchemaConfigFlowHandler,
+    SchemaFlowError,
     SchemaFlowFormStep,
     SchemaFlowMenuStep,
 )
@@ -85,7 +86,7 @@ def _validate_upper_or_lower(options: dict[str, Any]) -> None:
     lower_limit = options.get(CONF_LOWER_LIMIT)
 
     if upper_limit is None and lower_limit is None:
-        raise vol.Invalid("An upper or lower limit must be set")
+        raise SchemaFlowError("upper_or_lower_not_specified")
 
 
 def _validate_from_or_to(options: dict[str, Any]) -> None:
@@ -94,7 +95,7 @@ def _validate_from_or_to(options: dict[str, Any]) -> None:
     state_to = options.get(CONF_STATE_TO)
 
     if state_from is None and state_to is None:
-        raise vol.Invalid("A from or to must be specified")
+        raise SchemaFlowError("from_or_to_not_specified")
 
 
 def validate_user_input(
