@@ -1,6 +1,7 @@
 """Constants for label_state."""
 
 import json
+from enum import StrEnum
 from logging import Logger, getLogger
 from pathlib import Path
 
@@ -30,3 +31,10 @@ CONF_STATE_LOWER_LIMIT = "state_lower_limit"
 CONF_STATE_UPPER_LIMIT = "state_upper_limit"
 
 ATTR_LAST_MODIFIED = "last_modified"
+
+
+class StateTypes(StrEnum):
+    """Available state types."""
+
+    NUMERIC_STATE = "numeric_state"
+    STATE = "state"

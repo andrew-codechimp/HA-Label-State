@@ -31,16 +31,14 @@ from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType, StateTyp
 from homeassistant.util import dt as dt_util
 
 from .const import (
-    ATTR_LAST_MODIFIED,
     CONF_LABEL,
     CONF_STATE_FROM,
     CONF_STATE_LOWER_LIMIT,
     CONF_STATE_TO,
     CONF_STATE_TYPE,
     CONF_STATE_UPPER_LIMIT,
-    DOMAIN,
     LOGGER,
-    PLATFORMS,
+    StateTypes,
 )
 
 ICON = "mdi:tag-multiple"
@@ -164,6 +162,9 @@ class LabelStateBinarySensor(BinarySensorEntity):
     _attr_icon = ICON
     _attr_should_poll = False
 
+    _state_dict: dict[str, str] = {}
+    _old_state_dict: dict[str, str] = {}
+
     def __init__(
         self,
         hass: HomeAssistant,
@@ -195,14 +196,6 @@ class LabelStateBinarySensor(BinarySensorEntity):
 
         await super().async_added_to_hass()
 
-        # self.async_on_remove(
-        #     async_track_state_change_event(
-        #         self.hass,
-        #         self._source_entity_id,
-        #         self._async_min_max_sensor_state_listener,
-        #     )
-        # )
-
         registry = er.async_get(self.hass)
         for entity in registry.entities.values():
             for label in entity.labels:
@@ -213,40 +206,47 @@ class LabelStateBinarySensor(BinarySensorEntity):
                         entity.entity_id,
                     )
 
-        # if not entry:
-        #     LOGGER.warning(
-        #         "Unable to find entity %s",
-        #         self._source_entity_id,
-        #     )
+                    # Replay current state of the labelled entitiy
+                    state = self.hass.states.get(entity.entity_id)
+                    state_event: Event[EventStateChangedData] = Event(
+                        "",
+                        {
+                            "entity_id": entity.entity_id,
+                            "new_state": state,
+                            "old_state": None,
+                        },
+                    )
 
-        # if entry:
-        #     self._attr_icon = (
-        #         entry.icon
-        #         if entry.icon
-        #         else entry.original_icon
-        #         if entry.original_icon
-        #         else ICON
-        #     )
+                    self._async_state_listener(state_event, update_state=False)
 
-        #     state = await self.async_get_last_state()
-        #     if state is not None and state.state not in [
-        #         STATE_UNKNOWN,
-        #         STATE_UNAVAILABLE,
-        #     ]:
-        #         self._state = float(state.state)
-        #         self._calc_values()
+                    self.async_on_remove(
+                        async_track_state_change_event(
+                            self.hass, entity.entity_id, self._async_state_listener
+                        )
+                    )
 
-        #     # Replay current state of source entitiy
-        #     state = self.hass.states.get(self._source_entity_id)
-        #     state_event: Event[EventStateChangedData] = Event(
-        #         "",
-        #         {
-        #             "entity_id": self._source_entity_id,
-        #             "new_state": state,
-        #             "old_state": None,
-        #         },
-        #     )
-        #     self._async_min_max_sensor_state_listener(state_event, update_state=False)
+            # if not entry:
+            #     LOGGER.warning(
+            #         "Unable to find entity %s",
+            #         self._source_entity_id,
+            #     )
+
+            # if entry:
+            #     self._attr_icon = (
+            #         entry.icon
+            #         if entry.icon
+            #         else entry.original_icon
+            #         if entry.original_icon
+            #         else ICON
+            #     )
+
+            #     state = await self.async_get_last_state()
+            #     if state is not None and state.state not in [
+            #         STATE_UNKNOWN,
+            #         STATE_UNAVAILABLE,
+            #     ]:
+            #         self._state = float(state.state)
+            #         self._calc_values()
 
         #     self._calc_values()
 
@@ -259,75 +259,76 @@ class LabelStateBinarySensor(BinarySensorEntity):
 
     #     return attributes
 
-    # @callback
-    # def _async_min_max_sensor_state_listener(
-    #     self, event: Event[EventStateChangedData], update_state: bool = True
-    # ) -> None:
-    #     """Handle the sensor state changes."""
-    #     new_state = event.data["new_state"]
+    @callback
+    def _async_state_listener(
+        self, event: Event[EventStateChangedData], update_state: bool = True
+    ) -> None:
+        """Handle the sensor state changes."""
+        entity_id = event.data["entity_id"]
+        new_state = event.data["new_state"]
+        old_state = event.data["old_state"]
 
-    #     if (
-    #         new_state is None
-    #         or new_state.state is None
-    #         or new_state.state
-    #         in [
-    #             STATE_UNKNOWN,
-    #             STATE_UNAVAILABLE,
-    #         ]
-    #     ):
-    #         self._state = STATE_UNKNOWN
-    #         if not update_state:
-    #             return
+        LOGGER.debug("State changed for %s", entity_id)
 
-    #         self._calc_values()
-    #         self.async_write_ha_state()
-    #         return
+        # Store the state string in a dictionary keyed by the entity_id
+        self._state_dict[entity_id] = (
+            new_state.state if new_state is not None else STATE_UNKNOWN
+        )
+        self._old_state_dict[entity_id] = (
+            old_state.state if old_state is not None else STATE_UNKNOWN
+        )
 
-    #     if self._unit_of_measurement is None:
-    #         self._unit_of_measurement = new_state.attributes.get(
-    #             ATTR_UNIT_OF_MEASUREMENT
-    #         )
+        if not update_state:
+            return
 
-    #     if self._unit_of_measurement != new_state.attributes.get(
-    #         ATTR_UNIT_OF_MEASUREMENT
-    #     ):
-    #         LOGGER.warning(
-    #             "Units of measurement do not match for entity %s", self.entity_id
-    #         )
-    #         self._unit_of_measurement_mismatch = True
+        self._calc_state()
+        self.async_write_ha_state()
+        return
 
-    #     try:
-    #         self._state = float(new_state.state)
-    #     except ValueError:
-    #         LOGGER.warning("Unable to store state. Only numerical states are supported")
+        # try:
+        #     self._state = float(new_state.state)
+        # except ValueError:
+        #     LOGGER.warning("Unable to store state. Only numerical states are supported")
 
-    #     if not update_state:
-    #         return
+        if not update_state:
+            return
 
-    #     self._calc_values()
+        self._calc_values()
 
-    #     if self._state_had_real_change:
-    #         self._attr_last_modified = dt_util.utcnow().isoformat(sep=" ")
+        self.async_write_ha_state()
 
-    #     self.async_write_ha_state()
+    @callback
+    def _calc_state(self) -> None:
+        """Calculate the state."""
 
-    # @callback
-    # def _calc_values(self) -> None:
-    #     """Calculate the values."""
-    #     self._state_had_real_change = False
+        state_is_on = False
 
-    #     """Calculate min value, honoring unknown states."""
-    #     if self._sensor_attr == ATTR_MIN_VALUE:
-    #         if self._state not in [STATE_UNKNOWN, STATE_UNAVAILABLE] and (
-    #             self.min_value is None or self.min_value > self._state
-    #         ):
-    #             self.min_value = self._state
-    #             self._state_had_real_change = True
+        # if self._state_type == StateTypes.NUMERIC_STATE:
+        #     if self._state_lower_limit:
+        #     if self._state_upper_limit:
 
-    #     """Calculate max value, honoring unknown states."""
-    #     if self._sensor_attr == ATTR_MAX_VALUE:
-    #         if self._state not in [STATE_UNKNOWN, STATE_UNAVAILABLE] and (
-    #             self.max_value is None or self.max_value < self._state
-    #         ):
-    #             self.max_value = self._state
-    #             self._state_had_real_change = True
+        if self._state_type == StateTypes.STATE:
+            # if self._state_from:
+
+            if self._state_to:
+                for entity_state in self._state_dict.values():
+                    if entity_state == self._state_to:
+                        state_is_on = True
+
+        #     """Calculate min value, honoring unknown states."""
+        #     if self._sensor_attr == ATTR_MIN_VALUE:
+        #         if self._state not in [STATE_UNKNOWN, STATE_UNAVAILABLE] and (
+        #             self.min_value is None or self.min_value > self._state
+        #         ):
+        #             self.min_value = self._state
+        #             self._state_had_real_change = True
+
+        #     """Calculate max value, honoring unknown states."""
+        #     if self._sensor_attr == ATTR_MAX_VALUE:
+        #         if self._state not in [STATE_UNKNOWN, STATE_UNAVAILABLE] and (
+        #             self.max_value is None or self.max_value < self._state
+        #         ):
+        #             self.max_value = self._state
+        #             self._state_had_real_change = True
+
+        self._attr_is_on = state_is_on

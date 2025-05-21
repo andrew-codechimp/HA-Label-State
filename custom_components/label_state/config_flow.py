@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Coroutine, Mapping
-from enum import StrEnum
 from typing import Any, cast
 
 import voluptuous as vol
@@ -24,19 +23,13 @@ from .const import (
     CONF_STATE_TYPE,
     CONF_STATE_UPPER_LIMIT,
     DOMAIN,
+    StateTypes,
 )
 
 STATE_TYPES = [
     "numeric_state",
     "state",
 ]
-
-
-class StateTypes(StrEnum):
-    """Available state types."""
-
-    NUMERIC_STATE = "numeric_state"
-    STATE = "state"
 
 
 OPTIONS_SCHEMA_NUMERIC_STATE = vol.Schema(
