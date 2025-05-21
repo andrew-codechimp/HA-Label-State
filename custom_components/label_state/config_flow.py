@@ -18,10 +18,11 @@ from homeassistant.helpers.schema_config_entry_flow import (
 
 from .const import (
     CONF_LABEL,
-    CONF_LOWER_LIMIT,
     CONF_STATE_FROM,
+    CONF_STATE_LOWER_LIMIT,
     CONF_STATE_TO,
-    CONF_UPPER_LIMIT,
+    CONF_STATE_TYPE,
+    CONF_STATE_UPPER_LIMIT,
     DOMAIN,
 )
 
@@ -41,12 +42,12 @@ class StateTypes(StrEnum):
 OPTIONS_SCHEMA_NUMERIC_STATE = vol.Schema(
     {
         vol.Required(CONF_LABEL): selector.LabelSelector(),
-        vol.Optional(CONF_LOWER_LIMIT): selector.NumberSelector(
+        vol.Optional(CONF_STATE_LOWER_LIMIT): selector.NumberSelector(
             selector.NumberSelectorConfig(
                 mode=selector.NumberSelectorMode.BOX,
             ),
         ),
-        vol.Optional(CONF_UPPER_LIMIT): selector.NumberSelector(
+        vol.Optional(CONF_STATE_UPPER_LIMIT): selector.NumberSelector(
             selector.NumberSelectorConfig(
                 mode=selector.NumberSelectorMode.BOX,
             ),
@@ -82,8 +83,8 @@ async def choose_options_step(options: dict[str, Any]) -> str:
 
 def _validate_upper_or_lower(options: dict[str, Any]) -> None:
     """Validate upper or lower limit."""
-    upper_limit = options.get(CONF_UPPER_LIMIT)
-    lower_limit = options.get(CONF_LOWER_LIMIT)
+    upper_limit = options.get(CONF_STATE_UPPER_LIMIT)
+    lower_limit = options.get(CONF_STATE_LOWER_LIMIT)
 
     if upper_limit is None and lower_limit is None:
         raise SchemaFlowError("upper_or_lower_not_specified")
@@ -120,7 +121,7 @@ def validate_user_input(
             _validate_upper_or_lower(user_input)
         if state_type == StateTypes.STATE:
             _validate_from_or_to(user_input)
-        return {"state_type": state_type} | user_input
+        return {CONF_STATE_TYPE: state_type} | user_input
 
     return _validate_user_input
 
