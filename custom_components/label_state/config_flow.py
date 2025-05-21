@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Coroutine, Mapping
+from enum import StrEnum
 from typing import Any, cast
 
 import voluptuous as vol
-from homeassistant.const import CONF_TYPE
 from homeassistant.helpers import selector
 from homeassistant.helpers.schema_config_entry_flow import (
     SchemaCommonFlowHandler,
@@ -15,7 +15,27 @@ from homeassistant.helpers.schema_config_entry_flow import (
     SchemaFlowMenuStep,
 )
 
-from .const import CONF_LABEL, CONF_LOWER_LIMIT, CONF_STATE, CONF_UPPER_LIMIT, DOMAIN
+from .const import (
+    CONF_LABEL,
+    CONF_LOWER_LIMIT,
+    CONF_STATE_FROM,
+    CONF_STATE_TO,
+    CONF_UPPER_LIMIT,
+    DOMAIN,
+)
+
+STATE_TYPES = [
+    "numeric_state",
+    "state",
+]
+
+
+class StateTypes(StrEnum):
+    """Available state types."""
+
+    NUMERIC_STATE = "numeric_state"
+    STATE = "state"
+
 
 OPTIONS_SCHEMA_NUMERIC_STATE = vol.Schema(
     {
@@ -36,7 +56,8 @@ OPTIONS_SCHEMA_NUMERIC_STATE = vol.Schema(
 OPTIONS_SCHEMA_STATE = vol.Schema(
     {
         vol.Required(CONF_LABEL): selector.LabelSelector(),
-        vol.Required(CONF_STATE): selector.TextSelector(),
+        vol.Optional(CONF_STATE_FROM): selector.TextSelector(),
+        vol.Optional(CONF_STATE_TO): selector.TextSelector(),
     }
 )
 
@@ -53,10 +74,9 @@ CONFIG_SCHEMA_STATE = vol.Schema(
 ).extend(OPTIONS_SCHEMA_STATE.schema)
 
 
-LABEL_TYPES = [
-    "numeric_state",
-    "state",
-]
+async def choose_options_step(options: dict[str, Any]) -> str:
+    """Return next step_id for options flow according to label_type."""
+    return cast(str, options["state_type"])
 
 
 def _validate_upper_or_lower(options: dict[str, Any]) -> None:
@@ -68,8 +88,17 @@ def _validate_upper_or_lower(options: dict[str, Any]) -> None:
         raise vol.Invalid("An upper or lower limit must be set")
 
 
+def _validate_from_or_to(options: dict[str, Any]) -> None:
+    """Validate upper or lower limit."""
+    state_from = options.get(CONF_STATE_FROM)
+    state_to = options.get(CONF_STATE_TO)
+
+    if state_from is None and state_to is None:
+        raise vol.Invalid("An from or to must be specified")
+
+
 def validate_user_input(
-    label_type: str,
+    state_type: str,
 ) -> Callable[
     [SchemaCommonFlowHandler, dict[str, Any]],
     Coroutine[Any, Any, dict[str, Any]],
@@ -77,7 +106,8 @@ def validate_user_input(
     """Do post validation of user input.
 
     For numeric state: Validate an upper or lower limit is set.
-    For all domaines: Set label type.
+    For state: Validate a from or to is set.
+    For all domaines: Set state type.
     """
 
     async def _validate_user_input(
@@ -85,39 +115,36 @@ def validate_user_input(
         user_input: dict[str, Any],
     ) -> dict[str, Any]:
         """Validate based on label type and add label type to user input."""
-        if label_type == "numeric_state":
+        if state_type == StateTypes.NUMERIC_STATE:
             _validate_upper_or_lower(user_input)
-        return {"label_type": label_type} | user_input
+        if state_type == StateTypes.STATE:
+            _validate_from_or_to(user_input)
+        return {"state_type": state_type} | user_input
 
     return _validate_user_input
 
 
 CONFIG_FLOW = {
-    "user": SchemaFlowMenuStep(LABEL_TYPES),
-    "numeric_state": SchemaFlowFormStep(
+    "user": SchemaFlowMenuStep(STATE_TYPES),
+    StateTypes.NUMERIC_STATE: SchemaFlowFormStep(
         CONFIG_SCHEMA_NUMERIC_STATE,
-        validate_user_input=validate_user_input("numeric_state"),
+        validate_user_input=validate_user_input(StateTypes.NUMERIC_STATE),
     ),
-    "state": SchemaFlowFormStep(
+    StateTypes.STATE: SchemaFlowFormStep(
         CONFIG_SCHEMA_STATE,
-        validate_user_input=validate_user_input("state"),
+        validate_user_input=validate_user_input(StateTypes.STATE),
     ),
 }
 
 
-async def choose_options_step(options: dict[str, Any]) -> str:
-    """Return next step_id for options flow according to label_type."""
-    return cast(str, options["label_type"])
-
-
 OPTIONS_FLOW = {
     "init": SchemaFlowFormStep(next_step=choose_options_step),
-    "numeric_state": SchemaFlowFormStep(
+    StateTypes.NUMERIC_STATE: SchemaFlowFormStep(
         OPTIONS_SCHEMA_NUMERIC_STATE,
-        validate_user_input=validate_user_input("numeric_state"),
+        validate_user_input=validate_user_input(StateTypes.NUMERIC_STATE),
     ),
-    "state": SchemaFlowFormStep(
-        OPTIONS_SCHEMA_STATE, validate_user_input=validate_user_input("state")
+    StateTypes.STATE: SchemaFlowFormStep(
+        OPTIONS_SCHEMA_STATE, validate_user_input=validate_user_input(StateTypes.STATE)
     ),
 }
 

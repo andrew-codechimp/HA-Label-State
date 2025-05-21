@@ -2,7 +2,7 @@
     "config": {
         "step": {
             "user": {
-                "title": "Add Label State",
+                "title": "Label State",
                 "description": "Create a binary sensor that is true if any sensor with a label meets the criteria.",
                 "menu_options": {
                     "numeric_state": "Numeric state",
@@ -10,7 +10,7 @@
                 }
             },
             "numeric_state": {
-                "title": "Add Label State",
+                "title": "Label State",
                 "description": "Create a binary sensor that is true if any sensor with a label meets the criteria.",
                 "data": {
                     "label": "Label",
@@ -19,27 +19,44 @@
                     "upper_limit": "Upper limit"
                 },
                 "data_description": {
-                    "lower_limit": "Above",
-                    "upper_limit": "Below"
+                    "lower_limit": "Sensor will be true when any labelled sensor goes above this value",
+                    "upper_limit": "Sensor will be true when any labelled sensor goes below this value"
                 }
             },
             "state": {
-                "title": "Add Label State",
+                "title": "Label State",
                 "description": "Create a binary sensor that is true if any sensor with a label meets the criteria.",
                 "data": {
                     "label": "Label",
                     "name": "Name",
-                    "state": "State"
+                    "state_from": "From",
+                    "state_to": "To"
                 }
             }
         }
     },
     "options": {
         "step": {
-            "init": {
+            "numeric_state": {
+                "title": "Label State",
+                "description": "Create a binary sensor that is true if any sensor with a label meets the criteria.",
                 "data": {
-                    "entity_id": "Input entity",
-                    "type": "Statistic characteristic"
+                    "label": "Label",
+                    "lower_limit": "Lower limit",
+                    "upper_limit": "Upper limit"
+                },
+                "data_description": {
+                    "lower_limit": "Sensor will be true when any labelled sensor goes above this value",
+                    "upper_limit": "Sensor will be true when any labelled sensor goes below this value"
+                }
+            },
+            "state": {
+                "title": "Label State",
+                "description": "Create a binary sensor that is true if any sensor with a label meets the criteria.",
+                "data": {
+                    "label": "Label",
+                    "state_from": "From",
+                    "state_to": "To"
                 }
             }
         }

@@ -23,7 +23,8 @@ CONFIG_VERSION = 1
 PLATFORMS = [Platform.SENSOR]
 
 CONF_LABEL = "label"
-CONF_STATE = "state"
+CONF_STATE_FROM = "state_from"
+CONF_STATE_TO = "state_to"
 CONF_LOWER_LIMIT = "lower_limit"
 CONF_UPPER_LIMIT = "upper_limit"
 
