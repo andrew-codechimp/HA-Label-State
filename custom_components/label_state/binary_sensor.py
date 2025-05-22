@@ -180,6 +180,9 @@ class LabelStateBinarySensor(BinarySensorEntity):
             )
         )
 
+        self._calc_state()
+        self.async_write_ha_state()
+
     # @property
     # def extra_state_attributes(self) -> dict[str, Any] | None:
     #     """Return the device specific state attributes."""
