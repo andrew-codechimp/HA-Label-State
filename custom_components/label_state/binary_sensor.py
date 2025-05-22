@@ -339,7 +339,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
     def _calc_state(self) -> None:
         """Calculate the state."""
 
-        state_is_on = False
+        state_is_on: bool | None = False
 
         entity_registry = er.async_get(self.hass)
 
@@ -377,28 +377,34 @@ class LabelStateBinarySensor(BinarySensorEntity):
                 if entity_entry and self._label in entity_entry.labels:
                     entity_state = self._state_dict[entity_id]
 
-                    if (
-                        entity_state
-                        and self._state_lower_limit
-                        and self._state_upper_limit
-                    ) and (
-                        float(entity_state) > self._state_lower_limit
-                        and float(entity_state) < self._state_upper_limit
-                    ):
-                        state_is_on = True
-                    else:
+                    try:
                         if (
                             entity_state
                             and self._state_lower_limit
-                            and float(entity_state) > self._state_lower_limit
-                        ):
-                            state_is_on = True
-
-                        if (
-                            entity_state
                             and self._state_upper_limit
+                        ) and (
+                            float(entity_state) > self._state_lower_limit
                             and float(entity_state) < self._state_upper_limit
                         ):
                             state_is_on = True
+                        else:
+                            if (
+                                entity_state
+                                and self._state_lower_limit
+                                and float(entity_state) > self._state_lower_limit
+                            ):
+                                state_is_on = True
+
+                            if (
+                                entity_state
+                                and self._state_upper_limit
+                                and float(entity_state) < self._state_upper_limit
+                            ):
+                                state_is_on = True
+                    except ValueError:
+                        LOGGER.error(
+                            "Unable to determine state. Only numerical states are supported"
+                        )
+                        state_is_on = None
 
         self._attr_is_on = state_is_on
