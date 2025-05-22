@@ -341,42 +341,46 @@ class LabelStateBinarySensor(BinarySensorEntity):
 
         state_is_on = False
 
-        # if self._state_type == StateTypes.NUMERIC_STATE:
-        #     if self._state_lower_limit:
-        #     if self._state_upper_limit:
-
         entity_registry = er.async_get(self.hass)
 
         if self._state_type == StateTypes.STATE:
-            # if self._state_from:
+            for entity_id in self._state_dict.keys():
+                # Check if the state still has the label
+                entity_entry = entity_registry.async_get(entity_id)
+                if entity_entry and self._label in entity_entry.labels:
+                    entity_state = self._state_dict[entity_id]
+                    if (
+                        entity_state
+                        and self._state_to
+                        and entity_state.casefold() == self._state_to.casefold()
+                    ):
+                        state_is_on = True
 
-            if self._state_to:
-                for entity_id in self._state_dict.keys():
-                    # Check if the state still has the label
-                    entity_entry = entity_registry.async_get(entity_id)
-                    if entity_entry and self._label in entity_entry.labels:
-                        entity_state = self._state_dict[entity_id]
-                        if (
-                            entity_state
-                            and self._state_to
-                            and entity_state.casefold() == self._state_to.casefold()
-                        ):
-                            state_is_on = True
+                    if (
+                        entity_state
+                        and self._state_from
+                        and entity_state.casefold() == self._state_from.casefold()
+                    ):
+                        state_is_on = True
 
-        #     """Calculate min value, honoring unknown states."""
-        #     if self._sensor_attr == ATTR_MIN_VALUE:
-        #         if self._state not in [STATE_UNKNOWN, STATE_UNAVAILABLE] and (
-        #             self.min_value is None or self.min_value > self._state
-        #         ):
-        #             self.min_value = self._state
-        #             self._state_had_real_change = True
+        if self._state_type == StateTypes.NUMERIC_STATE:
+            for entity_id in self._state_dict.keys():
+                # Check if the state still has the label
+                entity_entry = entity_registry.async_get(entity_id)
+                if entity_entry and self._label in entity_entry.labels:
+                    entity_state = self._state_dict[entity_id]
+                    if (
+                        entity_state
+                        and self._state_lower_limit
+                        and float(entity_state) > self._state_lower_limit
+                    ):
+                        state_is_on = True
 
-        #     """Calculate max value, honoring unknown states."""
-        #     if self._sensor_attr == ATTR_MAX_VALUE:
-        #         if self._state not in [STATE_UNKNOWN, STATE_UNAVAILABLE] and (
-        #             self.max_value is None or self.max_value < self._state
-        #         ):
-        #             self.max_value = self._state
-        #             self._state_had_real_change = True
+                    if (
+                        entity_state
+                        and self._state_upper_limit
+                        and float(entity_state) < self._state_upper_limit
+                    ):
+                        state_is_on = True
 
         self._attr_is_on = state_is_on
