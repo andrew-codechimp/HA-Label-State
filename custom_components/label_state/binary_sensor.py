@@ -287,6 +287,11 @@ class LabelStateBinarySensor(BinarySensorEntity):
                         self.hass, entity_entry.entity_id, self._async_state_listener
                     )
                 )
+                LOGGER.debug(
+                    "Found label %s in entity %s",
+                    self._label,
+                    entity_entry.entity_id,
+                )
             # The label is not there anymore, stop listenting
 
             self._calc_state()
@@ -351,7 +356,11 @@ class LabelStateBinarySensor(BinarySensorEntity):
                     entity_entry = entity_registry.async_get(entity_id)
                     if entity_entry and self._label in entity_entry.labels:
                         entity_state = self._state_dict[entity_id]
-                        if entity_state == self._state_to:
+                        if (
+                            entity_state
+                            and self._state_to
+                            and entity_state.casefold() == self._state_to.casefold()
+                        ):
                             state_is_on = True
 
         #     """Calculate min value, honoring unknown states."""
