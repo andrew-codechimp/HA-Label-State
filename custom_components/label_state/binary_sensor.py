@@ -105,39 +105,6 @@ async def async_setup_entry(
     )
 
 
-# async def async_setup_platform(
-#     hass: HomeAssistant,
-#     config: ConfigType,
-#     async_add_entities: AddEntitiesCallback,
-#     discovery_info: DiscoveryInfoType | None = None,
-# ) -> None:
-#     """Set up the binary sensor."""
-#     name: str | None = config.get(CONF_NAME)
-#     label: str = config[CONF_LABEL]
-#     state_type: str = config[CONF_STATE_TYPE]
-#     state_from: str | None = config.get(CONF_STATE_FROM)
-#     state_to: str | None = config.get(CONF_STATE_TO)
-#     state_lower_limit: float | None = config.get(CONF_STATE_LOWER_LIMIT)
-#     state_upper_limit: float | None = config.get(CONF_STATE_UPPER_LIMIT)
-#     unique_id = config.get(CONF_UNIQUE_ID)
-
-#     async_add_entities(
-#         [
-#             LabelStateBinarySensor(
-#                 hass,
-#                 label,
-#                 name,
-#                 state_type,
-#                 state_from,
-#                 state_to,
-#                 state_lower_limit,
-#                 state_upper_limit,
-#                 unique_id,
-#             )
-#         ]
-#     )
-
-
 class LabelStateBinarySensor(BinarySensorEntity):
     """Representation of a Label State sensor."""
 
@@ -213,31 +180,6 @@ class LabelStateBinarySensor(BinarySensorEntity):
             )
         )
 
-        # if not entry:
-        #     LOGGER.warning(
-        #         "Unable to find entity %s",
-        #         self._source_entity_id,
-        #     )
-
-        # if entry:
-        #     self._attr_icon = (
-        #         entry.icon
-        #         if entry.icon
-        #         else entry.original_icon
-        #         if entry.original_icon
-        #         else ICON
-        #     )
-
-        #     state = await self.async_get_last_state()
-        #     if state is not None and state.state not in [
-        #         STATE_UNKNOWN,
-        #         STATE_UNAVAILABLE,
-        #     ]:
-        #         self._state = float(state.state)
-        #         self._calc_values()
-
-        #     self._calc_values()
-
     # @property
     # def extra_state_attributes(self) -> dict[str, Any] | None:
     #     """Return the device specific state attributes."""
@@ -300,19 +242,6 @@ class LabelStateBinarySensor(BinarySensorEntity):
 
         self._calc_state()
         self.async_write_ha_state()
-        return
-
-        # try:
-        #     self._state = float(new_state.state)
-        # except ValueError:
-        #     LOGGER.warning("Unable to store state. Only numerical states are supported")
-
-        if not update_state:
-            return
-
-        self._calc_values()
-
-        self.async_write_ha_state()
 
     @callback
     def _calc_state(self) -> None:
@@ -351,8 +280,8 @@ class LabelStateBinarySensor(BinarySensorEntity):
                             and self._state_lower_limit
                             and self._state_upper_limit
                         ) and (
-                            float(entity_state) > self._state_lower_limit
-                            and float(entity_state) < self._state_upper_limit
+                            float(entity_state) < self._state_lower_limit
+                            or float(entity_state) > self._state_upper_limit
                         ):
                             state_is_on = True
                         else:
@@ -361,7 +290,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
                                 and entity_state != STATE_UNKNOWN
                                 and entity_state != STATE_UNAVAILABLE
                                 and self._state_lower_limit
-                                and float(entity_state) > self._state_lower_limit
+                                and float(entity_state) < self._state_lower_limit
                             ):
                                 state_is_on = True
 
@@ -370,7 +299,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
                                 and entity_state != STATE_UNKNOWN
                                 and entity_state != STATE_UNAVAILABLE
                                 and self._state_upper_limit
-                                and float(entity_state) < self._state_upper_limit
+                                and float(entity_state) > self._state_upper_limit
                             ):
                                 state_is_on = True
                     except ValueError:

@@ -18,12 +18,12 @@
                 "data": {
                     "label": "Label",
                     "name": "Name",
-                    "lower_limit": "Lower limit",
-                    "upper_limit": "Upper limit"
+                    "state_lower_limit": "Lower limit",
+                    "state_upper_limit": "Upper limit"
                 },
                 "data_description": {
-                    "lower_limit": "Sensor will be true when any labelled sensor goes above this value",
-                    "upper_limit": "Sensor will be true when any labelled sensor goes below this value"
+                    "state_lower_limit": "Sensor will be true when any labelled sensor goes above this value",
+                    "state_upper_limit": "Sensor will be true when any labelled sensor goes below this value"
                 }
             },
             "state": {
@@ -47,12 +47,12 @@
                 "description": "Create a binary sensor that is true if any sensor with a label meets the criteria.",
                 "data": {
                     "label": "Label",
-                    "lower_limit": "Lower limit",
-                    "upper_limit": "Upper limit"
+                    "state_lower_limit": "Lower limit",
+                    "state_upper_limit": "Upper limit"
                 },
                 "data_description": {
-                    "lower_limit": "Sensor will be true when any labelled sensor goes above this value",
-                    "upper_limit": "Sensor will be true when any labelled sensor goes below this value"
+                    "state_lower_limit": "Sensor will be true when any labelled sensor goes above this value",
+                    "state_upper_limit": "Sensor will be true when any labelled sensor goes below this value"
                 }
             },
             "state": {
