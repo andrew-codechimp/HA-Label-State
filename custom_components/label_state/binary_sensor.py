@@ -21,6 +21,7 @@ from homeassistant.helpers.entity_platform import (
     AddConfigEntryEntitiesCallback,
     AddEntitiesCallback,
 )
+from homeassistant.helpers.entity_registry import EVENT_ENTITY_REGISTRY_UPDATED
 from homeassistant.helpers.event import (
     async_track_entity_registry_updated_event,
     async_track_state_change_event,
@@ -226,28 +227,35 @@ class LabelStateBinarySensor(BinarySensorEntity):
                         )
                     )
 
-            # if not entry:
-            #     LOGGER.warning(
-            #         "Unable to find entity %s",
-            #         self._source_entity_id,
-            #     )
+        self.async_on_remove(
+            self.hass.bus.async_listen(
+                EVENT_ENTITY_REGISTRY_UPDATED,
+                self._async_entity_registry_modified,
+            )
+        )
 
-            # if entry:
-            #     self._attr_icon = (
-            #         entry.icon
-            #         if entry.icon
-            #         else entry.original_icon
-            #         if entry.original_icon
-            #         else ICON
-            #     )
+        # if not entry:
+        #     LOGGER.warning(
+        #         "Unable to find entity %s",
+        #         self._source_entity_id,
+        #     )
 
-            #     state = await self.async_get_last_state()
-            #     if state is not None and state.state not in [
-            #         STATE_UNKNOWN,
-            #         STATE_UNAVAILABLE,
-            #     ]:
-            #         self._state = float(state.state)
-            #         self._calc_values()
+        # if entry:
+        #     self._attr_icon = (
+        #         entry.icon
+        #         if entry.icon
+        #         else entry.original_icon
+        #         if entry.original_icon
+        #         else ICON
+        #     )
+
+        #     state = await self.async_get_last_state()
+        #     if state is not None and state.state not in [
+        #         STATE_UNKNOWN,
+        #         STATE_UNAVAILABLE,
+        #     ]:
+        #         self._state = float(state.state)
+        #         self._calc_values()
 
         #     self._calc_values()
 
@@ -259,6 +267,30 @@ class LabelStateBinarySensor(BinarySensorEntity):
     #     attributes[ATTR_LAST_MODIFIED] = self._attr_last_modified
 
     #     return attributes
+
+    @callback
+    def _async_entity_registry_modified(
+        self, event: Event[er.EventEntityRegistryUpdatedData]
+    ) -> None:
+        """Handle entity registry update."""
+        data = event.data
+        if data["action"] == "update" and data["changes"].get("labels") is not None:
+            # Something label related
+
+            # Get the entity, check it's current labels
+            entity_registry = er.async_get(self.hass)
+            entity_entry = entity_registry.async_get(data["entity_id"])
+            if entity_entry and self._label in entity_entry.labels:
+                # The entity has a label, ensure we listen to it
+                self.async_on_remove(
+                    async_track_state_change_event(
+                        self.hass, entity_entry.entity_id, self._async_state_listener
+                    )
+                )
+            # The label is not there anymore, stop listenting
+
+            self._calc_state()
+            self.async_write_ha_state()
 
     @callback
     def _async_state_listener(
@@ -308,13 +340,19 @@ class LabelStateBinarySensor(BinarySensorEntity):
         #     if self._state_lower_limit:
         #     if self._state_upper_limit:
 
+        entity_registry = er.async_get(self.hass)
+
         if self._state_type == StateTypes.STATE:
             # if self._state_from:
 
             if self._state_to:
-                for entity_state in self._state_dict.values():
-                    if entity_state == self._state_to:
-                        state_is_on = True
+                for entity_id in self._state_dict.keys():
+                    # Check if the state still has the label
+                    entity_entry = entity_registry.async_get(entity_id)
+                    if entity_entry and self._label in entity_entry.labels:
+                        entity_state = self._state_dict[entity_id]
+                        if entity_state == self._state_to:
+                            state_is_on = True
 
         #     """Calculate min value, honoring unknown states."""
         #     if self._sensor_attr == ATTR_MIN_VALUE:
