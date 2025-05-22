@@ -349,19 +349,26 @@ class LabelStateBinarySensor(BinarySensorEntity):
                 entity_entry = entity_registry.async_get(entity_id)
                 if entity_entry and self._label in entity_entry.labels:
                     entity_state = self._state_dict[entity_id]
-                    if (
-                        entity_state
-                        and self._state_to
-                        and entity_state.casefold() == self._state_to.casefold()
-                    ):
-                        state_is_on = True
 
-                    if (
-                        entity_state
-                        and self._state_from
-                        and entity_state.casefold() == self._state_from.casefold()
+                    if (entity_state and self._state_from and self._state_to) and (
+                        entity_state.casefold() == self._state_from.casefold()
+                        or entity_state.casefold() == self._state_to.casefold()
                     ):
                         state_is_on = True
+                    else:
+                        if (
+                            entity_state
+                            and self._state_to
+                            and entity_state.casefold() == self._state_to.casefold()
+                        ):
+                            state_is_on = True
+
+                        if (
+                            entity_state
+                            and self._state_from
+                            and entity_state.casefold() == self._state_from.casefold()
+                        ):
+                            state_is_on = True
 
         if self._state_type == StateTypes.NUMERIC_STATE:
             for entity_id in self._state_dict.keys():
@@ -369,18 +376,29 @@ class LabelStateBinarySensor(BinarySensorEntity):
                 entity_entry = entity_registry.async_get(entity_id)
                 if entity_entry and self._label in entity_entry.labels:
                     entity_state = self._state_dict[entity_id]
-                    if (
-                        entity_state
-                        and self._state_lower_limit
-                        and float(entity_state) > self._state_lower_limit
-                    ):
-                        state_is_on = True
 
                     if (
                         entity_state
+                        and self._state_lower_limit
                         and self._state_upper_limit
+                    ) and (
+                        float(entity_state) > self._state_lower_limit
                         and float(entity_state) < self._state_upper_limit
                     ):
                         state_is_on = True
+                    else:
+                        if (
+                            entity_state
+                            and self._state_lower_limit
+                            and float(entity_state) > self._state_lower_limit
+                        ):
+                            state_is_on = True
+
+                        if (
+                            entity_state
+                            and self._state_upper_limit
+                            and float(entity_state) < self._state_upper_limit
+                        ):
+                            state_is_on = True
 
         self._attr_is_on = state_is_on
