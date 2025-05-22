@@ -352,7 +352,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
 
                     if (entity_state and self._state_from and self._state_to) and (
                         entity_state.casefold() == self._state_from.casefold()
-                        or entity_state.casefold() == self._state_to.casefold()
+                        and entity_state.casefold() == self._state_to.casefold()
                     ):
                         state_is_on = True
                     else:
