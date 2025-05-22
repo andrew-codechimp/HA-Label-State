@@ -2,9 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Any
-
-import voluptuous as vol
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
@@ -13,23 +10,12 @@ from homeassistant.const import (
     STATE_UNKNOWN,
 )
 from homeassistant.core import Event, EventStateChangedData, HomeAssistant, callback
-from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers import entity_platform
 from homeassistant.helpers import entity_registry as er
-from homeassistant.helpers.device import async_device_info_to_link_from_entity
 from homeassistant.helpers.entity_platform import (
     AddConfigEntryEntitiesCallback,
-    AddEntitiesCallback,
 )
 from homeassistant.helpers.entity_registry import EVENT_ENTITY_REGISTRY_UPDATED
-from homeassistant.helpers.event import (
-    async_track_entity_registry_updated_event,
-    async_track_state_change_event,
-)
-from homeassistant.helpers.reload import async_setup_reload_service
-from homeassistant.helpers.restore_state import RestoreEntity
-from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType, StateType
-from homeassistant.util import dt as dt_util
+from homeassistant.helpers.event import async_track_state_change_event
 
 from .const import (
     CONF_LABEL,
@@ -55,8 +41,6 @@ async def async_setup_entry(
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Initialize label state config entry."""
-    entity_registry = er.async_get(hass)
-    device_registry = dr.async_get(hass)
 
     name: str | None = config_entry.options.get(CONF_NAME)
     label: str = config_entry.options[CONF_LABEL]
