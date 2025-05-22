@@ -6,7 +6,7 @@
         "step": {
             "user": {
                 "title": "Label State",
-                "description": "Create a binary sensor that is true if any sensor with a label meets the criteria.",
+                "description": "Create a binary sensor that is true if any sensor with the label meets the criteria.",
                 "menu_options": {
                     "numeric_state": "Numeric state",
                     "state": "State"
@@ -14,16 +14,12 @@
             },
             "numeric_state": {
                 "title": "Label State",
-                "description": "Create a binary sensor that is true if any sensor with a label meets the criteria.",
+                "description": "Create a binary sensor that is true if any sensor's value with the label is outside of its normal bounds.",
                 "data": {
                     "label": "Label",
                     "name": "Name",
-                    "state_lower_limit": "Lower limit",
-                    "state_upper_limit": "Upper limit"
-                },
-                "data_description": {
-                    "state_lower_limit": "Sensor will be true when any labelled sensor goes above this value",
-                    "state_upper_limit": "Sensor will be true when any labelled sensor goes below this value"
+                    "state_lower_limit": "Lower bound",
+                    "state_upper_limit": "Upper bound"
                 }
             },
             "state": {
@@ -44,15 +40,11 @@
         "step": {
             "numeric_state": {
                 "title": "Label State",
-                "description": "Create a binary sensor that is true if any sensor with a label meets the criteria.",
+                "description": "Create a binary sensor that is true if any sensor's value with the label is outside of its normal bounds.",
                 "data": {
                     "label": "Label",
-                    "state_lower_limit": "Lower limit",
-                    "state_upper_limit": "Upper limit"
-                },
-                "data_description": {
-                    "state_lower_limit": "Sensor will be true when any labelled sensor goes above this value",
-                    "state_upper_limit": "Sensor will be true when any labelled sensor goes below this value"
+                    "state_lower_limit": "Lower bound",
+                    "state_upper_limit": "Upper bound"
                 }
             },
             "state": {

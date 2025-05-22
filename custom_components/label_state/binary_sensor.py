@@ -267,6 +267,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
                         and entity_state.casefold() == self._state_to.casefold()
                     ):
                         state_is_on = True
+                        break
 
         if self._state_type == StateTypes.NUMERIC_STATE:
             for entity_id in self._state_dict.keys():
@@ -284,12 +285,12 @@ class LabelStateBinarySensor(BinarySensorEntity):
                             and self._state_upper_limit is not None
                         ):
                             if (
-                                float(entity_state) > self._state_lower_limit
-                                and float(entity_state) < self._state_upper_limit
+                                float(entity_state) < self._state_lower_limit
+                                or float(entity_state) > self._state_upper_limit
                             ):
                                 state_is_on = True
                                 LOGGER.debug(
-                                    "State %s is above lower limit %s and below upper limit %s for %s",
+                                    "State %s is below lower limit %s and above upper limit %s for %s",
                                     entity_state,
                                     self._state_lower_limit,
                                     self._state_upper_limit,
@@ -301,11 +302,11 @@ class LabelStateBinarySensor(BinarySensorEntity):
                                 and entity_state != STATE_UNKNOWN
                                 and entity_state != STATE_UNAVAILABLE
                                 and self._state_lower_limit
-                                and float(entity_state) > self._state_lower_limit
+                                and float(entity_state) < self._state_lower_limit
                             ):
                                 state_is_on = True
                                 LOGGER.debug(
-                                    "State %s is above lower limit %s for %s",
+                                    "State %s is below lower limit %s for %s",
                                     entity_state,
                                     self._state_lower_limit,
                                     entity_id,
@@ -316,11 +317,11 @@ class LabelStateBinarySensor(BinarySensorEntity):
                                 and entity_state != STATE_UNKNOWN
                                 and entity_state != STATE_UNAVAILABLE
                                 and self._state_upper_limit
-                                and float(entity_state) < self._state_upper_limit
+                                and float(entity_state) > self._state_upper_limit
                             ):
                                 state_is_on = True
                                 LOGGER.debug(
-                                    "State %s is below upper limit %s for %s",
+                                    "State %s is above upper limit %s for %s",
                                     entity_state,
                                     self._state_upper_limit,
                                     entity_id,
@@ -331,6 +332,9 @@ class LabelStateBinarySensor(BinarySensorEntity):
                             "Unable to determine state. Only numerical states are supported"
                         )
                         state_is_on = None
+
+                if state_is_on:
+                    break
 
         LOGGER.debug(
             "State is %s for %s",
