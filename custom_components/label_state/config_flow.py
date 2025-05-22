@@ -17,7 +17,6 @@ from homeassistant.helpers.schema_config_entry_flow import (
 
 from .const import (
     CONF_LABEL,
-    CONF_STATE_FROM,
     CONF_STATE_LOWER_LIMIT,
     CONF_STATE_TO,
     CONF_STATE_TYPE,
@@ -51,8 +50,7 @@ OPTIONS_SCHEMA_NUMERIC_STATE = vol.Schema(
 OPTIONS_SCHEMA_STATE = vol.Schema(
     {
         vol.Required(CONF_LABEL): selector.LabelSelector(),
-        vol.Optional(CONF_STATE_FROM): selector.TextSelector(),
-        vol.Optional(CONF_STATE_TO): selector.TextSelector(),
+        vol.Required(CONF_STATE_TO): selector.TextSelector(),
     }
 )
 
@@ -83,15 +81,6 @@ def _validate_upper_or_lower(options: dict[str, Any]) -> None:
         raise SchemaFlowError("upper_or_lower_not_specified")
 
 
-def _validate_from_or_to(options: dict[str, Any]) -> None:
-    """Validate upper or lower limit."""
-    state_from = options.get(CONF_STATE_FROM)
-    state_to = options.get(CONF_STATE_TO)
-
-    if state_from is None and state_to is None:
-        raise SchemaFlowError("from_or_to_not_specified")
-
-
 def validate_user_input(
     state_type: str,
 ) -> Callable[
@@ -112,8 +101,6 @@ def validate_user_input(
         """Validate based on label type and add label type to user input."""
         if state_type == StateTypes.NUMERIC_STATE:
             _validate_upper_or_lower(user_input)
-        if state_type == StateTypes.STATE:
-            _validate_from_or_to(user_input)
         return {CONF_STATE_TYPE: state_type} | user_input
 
     return _validate_user_input

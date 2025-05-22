@@ -33,7 +33,6 @@ from homeassistant.util import dt as dt_util
 
 from .const import (
     CONF_LABEL,
-    CONF_STATE_FROM,
     CONF_STATE_LOWER_LIMIT,
     CONF_STATE_TO,
     CONF_STATE_TYPE,
@@ -62,7 +61,6 @@ async def async_setup_entry(
     name: str | None = config_entry.options.get(CONF_NAME)
     label: str = config_entry.options[CONF_LABEL]
     state_type: str = config_entry.options[CONF_STATE_TYPE]
-    state_from: str | None = config_entry.options.get(CONF_STATE_FROM)
     state_to: str | None = config_entry.options.get(CONF_STATE_TO)
     state_lower_limit: float | None = config_entry.options.get(CONF_STATE_LOWER_LIMIT)
     state_upper_limit: float | None = config_entry.options.get(CONF_STATE_UPPER_LIMIT)
@@ -114,7 +112,6 @@ async def async_setup_entry(
                 label,
                 name,
                 state_type,
-                state_from,
                 state_to,
                 state_lower_limit,
                 state_upper_limit,
@@ -172,7 +169,6 @@ class LabelStateBinarySensor(BinarySensorEntity):
         label: str,
         name: str | None,
         state_type: str,
-        state_from: str | None,
         state_to: str | None,
         state_lower_limit: float | None,
         state_upper_limit: float | None,
@@ -182,7 +178,6 @@ class LabelStateBinarySensor(BinarySensorEntity):
         self._attr_unique_id = unique_id
         self._label = label
         self._state_type = state_type
-        self._state_from = state_from
         self._state_to = state_to
         self._state_lower_limit = state_lower_limit
         self._state_upper_limit = state_upper_limit
@@ -350,25 +345,12 @@ class LabelStateBinarySensor(BinarySensorEntity):
                 if entity_entry and self._label in entity_entry.labels:
                     entity_state = self._state_dict[entity_id]
 
-                    if (entity_state and self._state_from and self._state_to) and (
-                        entity_state.casefold() == self._state_from.casefold()
+                    if (
+                        entity_state
+                        and self._state_to
                         and entity_state.casefold() == self._state_to.casefold()
                     ):
                         state_is_on = True
-                    else:
-                        if (
-                            entity_state
-                            and self._state_to
-                            and entity_state.casefold() == self._state_to.casefold()
-                        ):
-                            state_is_on = True
-
-                        if (
-                            entity_state
-                            and self._state_from
-                            and entity_state.casefold() == self._state_from.casefold()
-                        ):
-                            state_is_on = True
 
         if self._state_type == StateTypes.NUMERIC_STATE:
             for entity_id in self._state_dict.keys():

@@ -1,7 +1,6 @@
 {
     "config": {
         "error": {
-            "from_or_to_not_specified": "A from or to must be specified.",
             "upper_or_lower_not_specified": "An upper or lower limit must be set."
         },
         "step": {
@@ -33,7 +32,6 @@
                 "data": {
                     "label": "Label",
                     "name": "Name",
-                    "state_from": "From",
                     "state_to": "To"
                 }
             }
@@ -41,7 +39,6 @@
     },
     "options": {
         "error": {
-            "from_or_to_not_specified": "A from or to must be specified.",
             "upper_or_lower_not_specified": "An upper or lower limit must be set."
         },
         "step": {
@@ -63,7 +60,6 @@
                 "description": "Create a binary sensor that is true if any sensor with a label meets the criteria.",
                 "data": {
                     "label": "Label",
-                    "state_from": "From",
                     "state_to": "To"
                 }
             }
