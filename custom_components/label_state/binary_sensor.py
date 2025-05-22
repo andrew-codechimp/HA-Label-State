@@ -380,6 +380,8 @@ class LabelStateBinarySensor(BinarySensorEntity):
                     try:
                         if (
                             entity_state
+                            and entity_state != STATE_UNKNOWN
+                            and entity_state != STATE_UNAVAILABLE
                             and self._state_lower_limit
                             and self._state_upper_limit
                         ) and (
@@ -390,6 +392,8 @@ class LabelStateBinarySensor(BinarySensorEntity):
                         else:
                             if (
                                 entity_state
+                                and entity_state != STATE_UNKNOWN
+                                and entity_state != STATE_UNAVAILABLE
                                 and self._state_lower_limit
                                 and float(entity_state) > self._state_lower_limit
                             ):
@@ -397,6 +401,8 @@ class LabelStateBinarySensor(BinarySensorEntity):
 
                             if (
                                 entity_state
+                                and entity_state != STATE_UNKNOWN
+                                and entity_state != STATE_UNAVAILABLE
                                 and self._state_upper_limit
                                 and float(entity_state) < self._state_upper_limit
                             ):
