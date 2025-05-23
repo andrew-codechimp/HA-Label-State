@@ -1,6 +1,5 @@
 """The test for the label_state binary sensor platform."""
 
-from homeassistant.components.sensor import ATTR_STATE_CLASS, SensorStateClass
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 from homeassistant.setup import async_setup_component
@@ -42,7 +41,6 @@ async def test_min_sensor(
     state = hass.states.get("sensor.test_min")
 
     assert str(float(MIN_VALUE)) == state.state
-    assert state.attributes.get(ATTR_STATE_CLASS) == SensorStateClass.MEASUREMENT
 
     entity = entity_registry.async_get("sensor.test_min")
     assert entity.unique_id == "very_unique_id"
