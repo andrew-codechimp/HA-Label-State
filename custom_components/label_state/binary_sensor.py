@@ -27,7 +27,7 @@ from .const import (
     StateTypes,
 )
 
-ICON = "mdi:tag-multiple"
+ICON = "mdi:tag"
 
 
 async def config_entry_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
