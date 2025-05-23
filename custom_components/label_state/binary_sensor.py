@@ -112,7 +112,6 @@ class LabelStateBinarySensor(BinarySensorEntity):
     _attr_should_poll = False
 
     _state_dict: dict[str, str] = {}
-    _old_state_dict: dict[str, str] = {}
 
     def __init__(
         self,
@@ -228,16 +227,12 @@ class LabelStateBinarySensor(BinarySensorEntity):
         """Handle the sensor state changes."""
         entity_id = event.data["entity_id"]
         new_state = event.data["new_state"]
-        old_state = event.data["old_state"]
 
         LOGGER.debug("State changed for %s", entity_id)
 
         # Store the state string in a dictionary keyed by the entity_id
         self._state_dict[entity_id] = (
             new_state.state if new_state is not None else STATE_UNKNOWN
-        )
-        self._old_state_dict[entity_id] = (
-            old_state.state if old_state is not None else STATE_UNKNOWN
         )
 
         if not update_state:
