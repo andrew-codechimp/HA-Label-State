@@ -28,7 +28,7 @@ async def test_form_sensor(hass: HomeAssistant, mock_setup_entry: AsyncMock) -> 
         DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
     assert result.get("step_id") == "user"
-    assert result.get("type") is FlowResultType.FORM
+    assert result.get("type") is FlowResultType.MENU
 
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"],
