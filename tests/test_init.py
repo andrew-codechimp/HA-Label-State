@@ -6,6 +6,7 @@ from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers import label_registry as lr
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.label_state.const import DOMAIN
@@ -26,6 +27,7 @@ async def test_setup(
     hass: HomeAssistant,
     device_registry: dr.DeviceRegistry,
     entity_registry: er.EntityRegistry,
+    label_registry: lr.LabelRegistry,
 ) -> None:
     """Test the setup of the helper PeriodicMinMax."""
 
@@ -39,6 +41,10 @@ async def test_setup(
         identifiers={("sensor", "test_source")},
     )
 
+    test_label = label_registry.async_create(
+        "test",
+    )
+
     # Source entity registry
     source_entity = entity_registry.async_get_or_create(
         "sensor",
@@ -47,6 +53,8 @@ async def test_setup(
         config_entry=source_config_entry,
         device_id=source_device_entry.id,
     )
+    source_entity.labels.add(test_label.label_id)
+
     await hass.async_block_till_done()
     assert entity_registry.async_get("sensor.test_source") is not None
 
@@ -56,10 +64,11 @@ async def test_setup(
         domain=DOMAIN,
         options={
             "name": DEFAULT_NAME,
-            "entity_id": "sensor.test_source",
-            "type": "max",
+            "label": test_label.label_id,
+            "state_type": "state",
+            "state_to": "on",
         },
-        title=DEFAULT_NAME
+        title=DEFAULT_NAME,
     )
     label_state_config_entry.add_to_hass(hass)
     assert await hass.config_entries.async_setup(label_state_config_entry.entry_id)
@@ -69,10 +78,9 @@ async def test_setup(
     await hass.config_entries.async_reload(label_state_config_entry.entry_id)
     await hass.async_block_till_done()
 
-    # Confirm the link between the source entity device and the periodicminmax sensor
+    # # Confirm the link between the source entity device and the periodicminmax sensor
     label_state_entity = entity_registry.async_get("sensor.my_label_state")
     assert label_state_entity is not None
-    assert label_state_entity.device_id == source_entity.device_id
 
     # After reloading the config entry, check linked device
     devices_after_reload = device_registry.devices.get_devices_for_config_entry_id(

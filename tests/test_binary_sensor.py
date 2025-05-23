@@ -1,4 +1,4 @@
-"""The test for the label_state sensor platform."""
+"""The test for the label_state binary sensor platform."""
 
 from homeassistant.components.sensor import ATTR_STATE_CLASS, SensorStateClass
 from homeassistant.core import HomeAssistant

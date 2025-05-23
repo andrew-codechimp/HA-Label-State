@@ -18,9 +18,10 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.label_state.const import DOMAIN
 
-from .test_sensor import VALUES_NUMERIC
+from .test_binary_sensor import VALUES_NUMERIC
 
 pytest_plugins = "pytest_homeassistant_custom_component"
+
 
 # This fixture enables loading custom integrations in all tests.
 # Remove to enable selective use of this fixture
@@ -28,6 +29,7 @@ pytest_plugins = "pytest_homeassistant_custom_component"
 def auto_enable_custom_integrations(enable_custom_integrations):
     """Enable loading custom integrations."""
     yield
+
 
 @pytest.fixture
 def mock_setup_entry() -> Generator[AsyncMock]:
