@@ -1,0 +1,60 @@
+{
+    "config": {
+        "error": {
+            "upper_or_lower_not_specified": "An upper or lower limit must be set."
+        },
+        "step": {
+            "user": {
+                "title": "Label State",
+                "description": "Create a binary sensor that is on if any sensor with the label meets the criteria.",
+                "menu_options": {
+                    "numeric_state": "Numeric state",
+                    "state": "State"
+                }
+            },
+            "numeric_state": {
+                "title": "Label State",
+                "description": "Create a binary sensor that is on if any sensor's value with the label is outside of its normal bounds.",
+                "data": {
+                    "label": "Label",
+                    "name": "Name",
+                    "state_lower_limit": "Lower bound",
+                    "state_upper_limit": "Upper bound"
+                }
+            },
+            "state": {
+                "title": "Label State",
+                "description": "Create a binary sensor that is on if any sensor with a label meets the criteria.",
+                "data": {
+                    "label": "Label",
+                    "name": "Name",
+                    "state_to": "To"
+                }
+            }
+        }
+    },
+    "options": {
+        "error": {
+            "upper_or_lower_not_specified": "An upper or lower limit must be set."
+        },
+        "step": {
+            "numeric_state": {
+                "title": "Label State",
+                "description": "Create a binary sensor that is on if any sensor's value with the label is outside of its normal bounds.",
+                "data": {
+                    "label": "Label",
+                    "state_lower_limit": "Lower bound",
+                    "state_upper_limit": "Upper bound"
+                }
+            },
+            "state": {
+                "title": "Label State",
+                "description": "Create a binary sensor that is on if any sensor with a label meets the criteria.",
+                "data": {
+                    "label": "Label",
+                    "state_to": "To"
+                }
+            }
+        }
+    }
+}
