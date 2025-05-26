@@ -18,6 +18,7 @@ from homeassistant.helpers.entity_registry import EVENT_ENTITY_REGISTRY_UPDATED
 from homeassistant.helpers.event import async_track_state_change_event
 
 from .const import (
+    ATTR_ENTITIES,
     CONF_LABEL,
     CONF_STATE_LOWER_LIMIT,
     CONF_STATE_TO,
@@ -136,6 +137,12 @@ class LabelStateBinarySensor(BinarySensorEntity):
         self._unit_of_measurement_mismatch = False
 
         self._attr_is_on = False
+        self._attr_extra_state_attributes = {}
+        self._attr_extra_state_attributes.update(
+            {
+                ATTR_ENTITIES: None,
+            }
+        )
 
     async def async_added_to_hass(self) -> None:
         """Handle added to Hass."""
@@ -181,15 +188,6 @@ class LabelStateBinarySensor(BinarySensorEntity):
 
         self._calc_state()
         self.async_write_ha_state()
-
-    # @property
-    # def extra_state_attributes(self) -> dict[str, Any] | None:
-    #     """Return the device specific state attributes."""
-    #     attributes: dict[str, Any] = {}
-
-    #     attributes[ATTR_LAST_MODIFIED] = self._attr_last_modified
-
-    #     return attributes
 
     @callback
     def _async_entity_registry_modified(
@@ -246,6 +244,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
         """Calculate the state."""
 
         state_is_on: bool | None = False
+        entities_on: list[str] = []
 
         entity_registry = er.async_get(self.hass)
 
@@ -262,7 +261,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
                         and entity_state.casefold() == self._state_to.casefold()
                     ):
                         state_is_on = True
-                        break
+                        entities_on.append(entity_id)
 
         if self._state_type == StateTypes.NUMERIC_STATE:
             for entity_id in self._state_dict.keys():
@@ -284,6 +283,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
                                 or float(entity_state) > self._state_upper_limit
                             ):
                                 state_is_on = True
+                                entities_on.append(entity_id)
                                 LOGGER.debug(
                                     "State %s is below lower limit %s and above upper limit %s for %s",
                                     entity_state,
@@ -300,6 +300,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
                                 and float(entity_state) < self._state_lower_limit
                             ):
                                 state_is_on = True
+                                entities_on.append(entity_id)
                                 LOGGER.debug(
                                     "State %s is below lower limit %s for %s",
                                     entity_state,
@@ -315,6 +316,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
                                 and float(entity_state) > self._state_upper_limit
                             ):
                                 state_is_on = True
+                                entities_on.append(entity_id)
                                 LOGGER.debug(
                                     "State %s is above upper limit %s for %s",
                                     entity_state,
@@ -328,9 +330,6 @@ class LabelStateBinarySensor(BinarySensorEntity):
                         )
                         state_is_on = None
 
-                if state_is_on:
-                    break
-
         LOGGER.debug(
             "State is %s for %s",
             state_is_on,
@@ -338,3 +337,4 @@ class LabelStateBinarySensor(BinarySensorEntity):
         )
 
         self._attr_is_on = state_is_on
+        self._attr_extra_state_attributes[ATTR_ENTITIES] = entities_on

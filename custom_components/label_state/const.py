@@ -29,7 +29,7 @@ CONF_STATE_TO = "state_to"
 CONF_STATE_LOWER_LIMIT = "state_lower_limit"
 CONF_STATE_UPPER_LIMIT = "state_upper_limit"
 
-ATTR_LAST_MODIFIED = "last_modified"
+ATTR_ENTITIES = "entities"
 
 
 class StateTypes(StrEnum):
