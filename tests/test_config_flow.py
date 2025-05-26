@@ -41,7 +41,7 @@ from custom_components.label_state.const import (
         ),
         (
             "Numeric State",
-            "state_numeric",
+            "numeric_state",
             "my_label",
             None,
             10,
@@ -61,41 +61,55 @@ async def test_config_flow(
 ) -> None:
     """Test the config flow."""
 
-    result = await hass.config_entries.flow.async_init(
+    menu_step = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
-    assert result.get("type") is FlowResultType.MENU
+    assert menu_step.get("type") is FlowResultType.MENU
+    assert menu_step.get("step_id") == "user"
 
-    result = await hass.config_entries.flow.async_configure(
-        result["flow_id"],
-        {"next_step": state_type},
+    form_step = await hass.config_entries.flow.async_configure(
+        menu_step["flow_id"],
+        {"next_step_id": state_type},
     )
 
-    with patch(
-        "homeassistant.components.template.async_setup_entry", wraps=async_setup_entry
-    ) as mock_setup_entry:
+    if state_type == "numeric_state":
         result = await hass.config_entries.flow.async_configure(
-            result["flow_id"],
+            form_step["flow_id"],
             {
                 CONF_NAME: name,
-                CONF_STATE_TYPE: state_type,
                 CONF_LABEL: label,
-                CONF_STATE_TO: state_to,
                 CONF_STATE_LOWER_LIMIT: state_lower_limit,
                 CONF_STATE_UPPER_LIMIT: state_upper_limit,
             },
         )
-        await hass.async_block_till_done()
+    else:
+        result = await hass.config_entries.flow.async_configure(
+            form_step["flow_id"],
+            {
+                CONF_NAME: name,
+                CONF_LABEL: label,
+                CONF_STATE_TO: state_to,
+            },
+        )
+    await hass.async_block_till_done()
 
     assert result.get("type") is FlowResultType.CREATE_ENTRY
     assert result.get("version") == 1
-    assert result.get("options") == {
-        CONF_NAME: name,
-        CONF_STATE_TYPE: state_type,
-        CONF_LABEL: label,
-        CONF_STATE_TO: state_to,
-        CONF_STATE_LOWER_LIMIT: state_lower_limit,
-        CONF_STATE_UPPER_LIMIT: state_upper_limit,
-    }
+
+    if state_type == "numeric_state":
+        assert result.get("options") == {
+            CONF_NAME: name,
+            CONF_STATE_TYPE: state_type,
+            CONF_LABEL: label,
+            CONF_STATE_LOWER_LIMIT: state_lower_limit,
+            CONF_STATE_UPPER_LIMIT: state_upper_limit,
+        }
+    else:
+        assert result.get("options") == {
+            CONF_NAME: name,
+            CONF_STATE_TYPE: state_type,
+            CONF_LABEL: label,
+            CONF_STATE_TO: state_to,
+        }
 
     assert len(mock_setup_entry.mock_calls) == 1
