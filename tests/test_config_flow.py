@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, patch
 
+import pytest
 from homeassistant import config_entries
+from homeassistant.components.template import async_setup_entry
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
@@ -18,36 +20,82 @@ from custom_components.label_state.const import (
     DOMAIN,
 )
 
-from .const import DEFAULT_NAME
 
-
-async def test_form_sensor(hass: HomeAssistant, mock_setup_entry: AsyncMock) -> None:
-    """Test we get the form for sensor."""
+@pytest.mark.parametrize(
+    (
+        "name",
+        "state_type",
+        "label",
+        "state_to",
+        "state_lower_limit",
+        "state_upper_limit",
+    ),
+    [
+        (
+            "Unavailable",
+            "state",
+            "my_label",
+            "unavailable",
+            None,
+            None,
+        ),
+        (
+            "Numeric State",
+            "state_numeric",
+            "my_label",
+            None,
+            10,
+            20,
+        ),
+    ],
+)
+async def test_config_flow(
+    hass: HomeAssistant,
+    name: str,
+    state_type: str,
+    label: str,
+    state_to: str | None,
+    state_lower_limit: float | None,
+    state_upper_limit: float | None,
+    mock_setup_entry: AsyncMock,
+) -> None:
+    """Test the config flow."""
 
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
-    assert result.get("step_id") == "user"
     assert result.get("type") is FlowResultType.MENU
 
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"],
-        {
-            CONF_NAME: DEFAULT_NAME,
-            CONF_STATE_TYPE: "state",
-            CONF_LABEL: "test_label",
-            CONF_STATE_TO: "on",
-        },
+        {"next_step": state_type},
     )
-    await hass.async_block_till_done()
+
+    with patch(
+        "homeassistant.components.template.async_setup_entry", wraps=async_setup_entry
+    ) as mock_setup_entry:
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            {
+                CONF_NAME: name,
+                CONF_STATE_TYPE: state_type,
+                CONF_LABEL: label,
+                CONF_STATE_TO: state_to,
+                CONF_STATE_LOWER_LIMIT: state_lower_limit,
+                CONF_STATE_UPPER_LIMIT: state_upper_limit,
+            },
+        )
+        await hass.async_block_till_done()
 
     assert result.get("type") is FlowResultType.CREATE_ENTRY
     assert result.get("version") == 1
     assert result.get("options") == {
-        CONF_NAME: DEFAULT_NAME,
-        CONF_STATE_TYPE: "state",
-        CONF_LABEL: "test_label",
-        CONF_STATE_TO: "on",
+        CONF_NAME: name,
+        CONF_STATE_TYPE: state_type,
+        CONF_LABEL: label,
+        CONF_STATE_TO: state_to,
+        CONF_STATE_LOWER_LIMIT: state_lower_limit,
+        CONF_STATE_UPPER_LIMIT: state_upper_limit,
     }
 
     assert len(mock_setup_entry.mock_calls) == 1
