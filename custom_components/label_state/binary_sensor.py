@@ -140,7 +140,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
         self._attr_extra_state_attributes = {}
         self._attr_extra_state_attributes.update(
             {
-                ATTR_ENTITIES: None,
+                ATTR_ENTITIES: [],
             }
         )
 
