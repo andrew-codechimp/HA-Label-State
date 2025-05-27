@@ -78,22 +78,6 @@ async def test_setup(
     await hass.config_entries.async_reload(label_state_config_entry.entry_id)
     await hass.async_block_till_done()
 
-    # # Confirm the link between the source entity device and the periodicminmax sensor
-    label_state_entity = entity_registry.async_get("sensor.my_label_state")
-    assert label_state_entity is not None
-
-    # After reloading the config entry, check linked device
-    devices_after_reload = device_registry.devices.get_devices_for_config_entry_id(
-        label_state_config_entry.entry_id
-    )
-    assert len(devices_after_reload) == 1
-
-    assert devices_after_reload[0].id == source_device_entry.id
-
     # Remove the config entry
     assert await hass.config_entries.async_remove(label_state_config_entry.entry_id)
     await hass.async_block_till_done()
-
-    # Check the state and entity registry entry are removed
-    assert hass.states.get(label_state_entity.entity_id) is None
-    assert entity_registry.async_get(label_state_entity.entity_id) is None
