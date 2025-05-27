@@ -100,21 +100,21 @@ async def test_state_sensor(
         "expected_state",
     ),
     [
-        ("11", "12", "10", "20", "off"),
-        ("1", "12", "10", "20", "on"),
+        ("11", "12", 10, 20, "off"),
+        ("1", "12", 10, 20, "on"),
     ],
 )
 async def test_numeric_state_sensor(
     hass: HomeAssistant,
     state_1: str,
     state_2: str,
-    state_lower_limit: str,
-    state_upper_limit: str,
+    state_lower_limit: float,
+    state_upper_limit: float,
     expected_state: str,
     entity_registry: er.EntityRegistry,
     label_registry: lr.LabelRegistry,
 ) -> None:
-    """Test the state sensor."""
+    """Test the numeric state sensor."""
 
     test_label = label_registry.async_create(
         "test",
@@ -146,9 +146,9 @@ async def test_numeric_state_sensor(
         title="test_numeric_state",
     )
 
-    config.add_to_hass(hass)
-    # await setup_integration(hass, config)
-    assert await hass.config_entries.async_setup(config.entry_id)
+    # config.add_to_hass(hass)
+    await setup_integration(hass, config)
+    # assert await hass.config_entries.async_setup(config.entry_id)
     await hass.async_block_till_done()
 
     hass.states.async_set(sensor1_entity_entry.entity_id, state_1)
