@@ -76,6 +76,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
     _attr_should_poll = False
 
     _state_dict: dict[str, str] = {}
+    _tracked_entities: list[str] = []
 
     def __init__(
         self,
@@ -159,24 +160,25 @@ class LabelStateBinarySensor(BinarySensorEntity):
         """Handle entity registry update."""
         data = event.data
         if data["action"] == "update" and data["changes"].get("labels") is not None:
-            # Something label related
-
             # Get the entity, check it's current labels
             entity_registry = er.async_get(self.hass)
             entity_entry = entity_registry.async_get(data["entity_id"])
             if entity_entry and self._label in entity_entry.labels:
-                # The entity has a label, ensure we listen to it
-                self.async_on_remove(
-                    async_track_state_change_event(
-                        self.hass, entity_entry.entity_id, self._async_state_listener
+                # The entity has a label, ensure we listen to it, if not already
+                if entity_entry.entity_id not in self._tracked_entities:
+                    self.async_on_remove(
+                        async_track_state_change_event(
+                            self.hass,
+                            entity_entry.entity_id,
+                            self._async_state_listener,
+                        )
                     )
-                )
-                LOGGER.debug(
-                    "Found label %s in entity %s",
-                    self._label,
-                    entity_entry.entity_id,
-                )
-            # The label is not there anymore, stop listenting
+                    self._tracked_entities.append(entity_entry.entity_id)
+                    LOGGER.debug(
+                        "Found label %s in entity %s",
+                        self._label,
+                        entity_entry.entity_id,
+                    )
 
             self._calc_state()
             self.async_write_ha_state()
