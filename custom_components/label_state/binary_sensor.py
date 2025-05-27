@@ -115,31 +115,34 @@ class LabelStateBinarySensor(BinarySensorEntity):
 
         ent_reg = er.async_get(self.hass)
         entries = er.async_entries_for_label(ent_reg, self._label)
-        for entry in entries:
-            for label in entry.labels:
+        for entity_entry in entries:
+            for label in entity_entry.labels:
                 if label == self._label:
                     LOGGER.debug(
                         "Found label %s in entity %s",
                         self._label,
-                        entry.entity_id,
+                        entity_entry.entity_id,
                     )
 
                     # Replay current state of the labelled entitiy
-                    state = self.hass.states.get(entry.entity_id)
+                    state = self.hass.states.get(entity_entry.entity_id)
                     state_event: Event[EventStateChangedData] = Event(
                         "",
                         {
-                            "entity_id": entry.entity_id,
+                            "entity_id": entity_entry.entity_id,
                             "new_state": state,
                             "old_state": None,
                         },
                     )
 
-                    self._async_state_listener(state_event, update_state=False)
+                    if entity_entry and self._label in entity_entry.labels:
+                        self._async_state_listener(state_event, update_state=False)
 
                     self.async_on_remove(
                         async_track_state_change_event(
-                            self.hass, entry.entity_id, self._async_state_listener
+                            self.hass,
+                            entity_entry.entity_id,
+                            self._async_state_listener,
                         )
                     )
 
@@ -198,11 +201,10 @@ class LabelStateBinarySensor(BinarySensorEntity):
             new_state.state if new_state is not None else STATE_UNKNOWN
         )
 
-        if not update_state:
-            return
-
         self._calc_state()
-        self.async_write_ha_state()
+
+        if update_state:
+            self.async_write_ha_state()
 
     @callback
     def _calc_state(self) -> None:
