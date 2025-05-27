@@ -28,8 +28,6 @@ from .const import (
     StateTypes,
 )
 
-ICON = "mdi:tag"
-
 
 async def config_entry_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Update listener, called when the config entry options are changed."""
@@ -51,44 +49,9 @@ async def async_setup_entry(
     state_upper_limit: float | None = config_entry.options.get(CONF_STATE_UPPER_LIMIT)
     unique_id = config_entry.entry_id
 
-    async def async_registry_updated(
-        event: Event[er.EventEntityRegistryUpdatedData],
-    ) -> None:
-        """Handle entity registry update."""
-        data = event.data
-        if data["action"] == "remove":
-            await hass.config_entries.async_remove(config_entry.entry_id)
-
-        if data["action"] != "update":
-            return
-
-        if "entity_id" in data["changes"]:
-            # Entity_id changed, reload the config entry
-            await hass.config_entries.async_reload(config_entry.entry_id)
-
-        # if device_id and "device_id" in data["changes"]:
-        #     # If the tracked entity is no longer in the device, remove our config entry
-        #     # from the device
-        #     if (
-        #         not (entity_entry := entity_registry.async_get(data[CONF_ENTITY_ID]))
-        #         or not device_registry.async_get(device_id)
-        #         or entity_entry.device_id == device_id
-        #     ):
-        #         # No need to do any cleanup
-        #         return
-
-        #     device_registry.async_update_device(
-        #         device_id, remove_config_entry_id=config_entry.entry_id
-        #     )
-
-    # config_entry.async_on_unload(
-    #     async_track_entity_registry_updated_event(
-    #         hass, entity_id, async_registry_updated
-    #     )
-    # )
-    # config_entry.async_on_unload(
-    #     config_entry.add_update_listener(config_entry_update_listener)
-    # )
+    config_entry.async_on_unload(
+        config_entry.add_update_listener(config_entry_update_listener)
+    )
 
     async_add_entities(
         [
@@ -109,7 +72,7 @@ async def async_setup_entry(
 class LabelStateBinarySensor(BinarySensorEntity):
     """Representation of a Label State sensor."""
 
-    _attr_icon = ICON
+    _attr_icon = "mdi:tag"
     _attr_should_poll = False
 
     _state_dict: dict[str, str] = {}
