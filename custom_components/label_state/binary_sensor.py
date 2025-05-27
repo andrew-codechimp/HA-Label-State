@@ -6,6 +6,7 @@ from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONF_NAME,
+    CONF_UNIQUE_ID,
     STATE_UNAVAILABLE,
     STATE_UNKNOWN,
 )
@@ -13,9 +14,11 @@ from homeassistant.core import Event, EventStateChangedData, HomeAssistant, call
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity_platform import (
     AddConfigEntryEntitiesCallback,
+    AddEntitiesCallback,
 )
 from homeassistant.helpers.entity_registry import EVENT_ENTITY_REGISTRY_UPDATED
 from homeassistant.helpers.event import async_track_state_change_event
+from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType, StateType
 
 from .const import (
     ATTR_ENTITIES,
@@ -52,6 +55,37 @@ async def async_setup_entry(
     config_entry.async_on_unload(
         config_entry.add_update_listener(config_entry_update_listener)
     )
+
+    async_add_entities(
+        [
+            LabelStateBinarySensor(
+                hass,
+                label,
+                name,
+                state_type,
+                state_to,
+                state_lower_limit,
+                state_upper_limit,
+                unique_id,
+            )
+        ]
+    )
+
+
+async def async_setup_platform(
+    hass: HomeAssistant,
+    config: ConfigType,
+    async_add_entities: AddEntitiesCallback,
+    discovery_info: DiscoveryInfoType | None = None,
+) -> None:
+    """Set up the min/max/mean sensor."""
+    label: str = config[CONF_LABEL]
+    name: str | None = config.get(CONF_NAME)
+    state_type: str = config[CONF_STATE_TYPE]
+    state_to: str | None = config.get(CONF_STATE_TO)
+    state_lower_limit: float | None = config.get(CONF_STATE_LOWER_LIMIT)
+    state_upper_limit: float | None = config.get(CONF_STATE_UPPER_LIMIT)
+    unique_id = config.get(CONF_UNIQUE_ID)
 
     async_add_entities(
         [

@@ -1,6 +1,14 @@
 """The test for the label_state binary sensor platform."""
 
 import pytest
+from homeassistant.const import (
+    CONF_ENTITY_ID,
+    CONF_NAME,
+    CONF_PLATFORM,
+    CONF_UNIQUE_ID,
+    EVENT_HOMEASSISTANT_STARTED,
+    STATE_ON,
+)
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers import label_registry as lr
@@ -117,13 +125,14 @@ async def test_numeric_state_sensor(
     """Test the numeric state sensor."""
 
     test_label = label_registry.async_create(
-        "test",
+        "test_numeric_state",
     )
 
     sensor1_entity_entry = entity_registry.async_get_or_create(
         "sensor", "test_1", "unique", suggested_object_id="test_1"
     )
     sensor1_entity_entry.labels.add(test_label.label_id)
+    await hass.async_block_till_done()
     assert sensor1_entity_entry.entity_id == "sensor.test_1"
     assert test_label.label_id in sensor1_entity_entry.labels
 
@@ -131,24 +140,22 @@ async def test_numeric_state_sensor(
         "sensor", "test_2", "unique", suggested_object_id="test_2"
     )
     sensor2_entity_entry.labels.add(test_label.label_id)
+    await hass.async_block_till_done()
     assert sensor2_entity_entry.entity_id == "sensor.test_2"
+    assert test_label.label_id in sensor2_entity_entry.labels
 
-    config = MockConfigEntry(
-        domain="label_state",
-        data={},
-        options={
+    config = {
+        "binary_sensor": {
+            "platform": "label_state",
             "name": "test_numeric_state",
             "label": test_label.label_id,
             "state_type": "numeric_state",
             "state_lower_limit": state_lower_limit,
             "state_upper_limit": state_upper_limit,
-        },
-        title="test_numeric_state",
-    )
+        }
+    }
 
-    # config.add_to_hass(hass)
-    await setup_integration(hass, config)
-    # assert await hass.config_entries.async_setup(config.entry_id)
+    assert await async_setup_component(hass, "binary_sensor", config)
     await hass.async_block_till_done()
 
     hass.states.async_set(sensor1_entity_entry.entity_id, state_1)
@@ -156,6 +163,10 @@ async def test_numeric_state_sensor(
 
     hass.states.async_set(sensor2_entity_entry.entity_id, state_2)
     await hass.async_block_till_done()
+
+    state1 = hass.states.get(sensor1_entity_entry.entity_id)
+    assert state1 is not None
+    assert state1.state == state_1
 
     state = hass.states.get("binary_sensor.test_numeric_state")
 
