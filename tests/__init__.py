@@ -1,11 +1,10 @@
 """Tests for label_state integration."""
 
 import pytest
-
-pytestmark = pytest.mark.asyncio
-
 from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
+
+pytestmark = pytest.mark.asyncio
 
 
 async def setup_integration(hass: HomeAssistant, config_entry: MockConfigEntry) -> None:

@@ -18,8 +18,6 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.label_state.const import DOMAIN
 
-from .test_binary_sensor import VALUES_NUMERIC
-
 pytest_plugins = "pytest_homeassistant_custom_component"
 
 
@@ -70,13 +68,6 @@ async def load_integration(
     config_entry.add_to_hass(hass)
 
     await hass.config_entries.async_setup(config_entry.entry_id)
-    await hass.async_block_till_done()
-
-    for value in VALUES_NUMERIC:
-        hass.states.async_set(
-            "sensor.test_monitored",
-            str(value),
-        )
     await hass.async_block_till_done()
 
     return config_entry

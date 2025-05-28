@@ -1,14 +1,6 @@
 """The test for the label_state binary sensor platform."""
 
 import pytest
-from homeassistant.const import (
-    CONF_ENTITY_ID,
-    CONF_NAME,
-    CONF_PLATFORM,
-    CONF_UNIQUE_ID,
-    EVENT_HOMEASSISTANT_STARTED,
-    STATE_ON,
-)
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers import label_registry as lr
@@ -16,15 +8,6 @@ from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from . import setup_integration
-
-VALUES_STATE1 = ["on", "off", "unavailable"]
-VALUES_STATE2 = ["on", "off", "unavailable"]
-VALUES_NUMERIC = [17, 20, 15.2, 5, 3.8, 9.2, 6.7, 14, 6]
-VALUES_ERROR = [17, "string", 15.3]
-COUNT = len(VALUES_NUMERIC)
-MIN_VALUE = min(VALUES_NUMERIC)
-MAX_VALUE = max(VALUES_NUMERIC)
-LAST_VALUE = VALUES_NUMERIC[-1]
 
 
 @pytest.mark.parametrize(
