@@ -31,6 +31,7 @@ LAST_VALUE = VALUES_NUMERIC[-1]
     (
         "state_1",
         "state_2",
+        "state_3",
         "expected_state",
     ),
     [
@@ -38,8 +39,10 @@ LAST_VALUE = VALUES_NUMERIC[-1]
             "unavailable",
             "on",
             "on",
+            "on",
         ),
         (
+            "on",
             "on",
             "on",
             "off",
@@ -50,6 +53,7 @@ async def test_state_sensor(
     hass: HomeAssistant,
     state_1: str,
     state_2: str,
+    state_3: str,
     expected_state: str,
     entity_registry: er.EntityRegistry,
     label_registry: lr.LabelRegistry,
@@ -99,6 +103,25 @@ async def test_state_sensor(
     await hass.async_block_till_done()
 
     hass.states.async_set(sensor2_entity_entry.entity_id, state_2)
+    await hass.async_block_till_done()
+
+    state = hass.states.get("binary_sensor.test_state")
+
+    assert state is not None
+    assert state.state == expected_state
+
+    # Add a third sensor to test the listener change
+    sensor3_entity_entry = entity_registry.async_get_or_create(
+        "sensor", "test_3", "unique", suggested_object_id="test_3"
+    )
+    await hass.async_block_till_done()
+    sensor3_entity_entry = entity_registry.async_update_entity(
+        sensor3_entity_entry.entity_id, labels={test_label.label_id}
+    )
+    await hass.async_block_till_done()
+    assert sensor3_entity_entry.entity_id == "sensor.test_3"
+
+    hass.states.async_set(sensor3_entity_entry.entity_id, state_3)
     await hass.async_block_till_done()
 
     state = hass.states.get("binary_sensor.test_state")
