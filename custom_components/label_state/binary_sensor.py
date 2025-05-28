@@ -149,6 +149,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
 
         ent_reg = er.async_get(self.hass)
         entries = er.async_entries_for_label(ent_reg, self._label)
+
         for entity_entry in entries:
             for label in entity_entry.labels:
                 if label == self._label:

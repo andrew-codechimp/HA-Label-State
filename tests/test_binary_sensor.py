@@ -63,13 +63,21 @@ async def test_state_sensor(
     sensor1_entity_entry = entity_registry.async_get_or_create(
         "sensor", "test_1", "unique", suggested_object_id="test_1"
     )
-    sensor1_entity_entry.labels.add(test_label.label_id)
+    await hass.async_block_till_done()
+    sensor1_entity_entry = entity_registry.async_update_entity(
+        sensor1_entity_entry.entity_id, labels={test_label.label_id}
+    )
+    await hass.async_block_till_done()
     assert sensor1_entity_entry.entity_id == "sensor.test_1"
 
     sensor2_entity_entry = entity_registry.async_get_or_create(
         "sensor", "test_2", "unique", suggested_object_id="test_2"
     )
-    sensor2_entity_entry.labels.add(test_label.label_id)
+    await hass.async_block_till_done()
+    sensor2_entity_entry = entity_registry.async_update_entity(
+        sensor2_entity_entry.entity_id, labels={test_label.label_id}
+    )
+    await hass.async_block_till_done()
     assert sensor2_entity_entry.entity_id == "sensor.test_2"
 
     config = MockConfigEntry(
@@ -110,14 +118,18 @@ async def test_state_sensor(
     [
         ("11", "12", 10, 20, "off"),
         ("1", "12", 10, 20, "on"),
+        ("11", "12", 10, None, "off"),
+        ("1", "12", 10, None, "on"),
+        ("1", "19", None, 20, "off"),
+        ("1", "22", None, 20, "on"),
     ],
 )
 async def test_numeric_state_sensor(
     hass: HomeAssistant,
     state_1: str,
     state_2: str,
-    state_lower_limit: float,
-    state_upper_limit: float,
+    state_lower_limit: float | None,
+    state_upper_limit: float | None,
     expected_state: str,
     entity_registry: er.EntityRegistry,
     label_registry: lr.LabelRegistry,
@@ -125,13 +137,16 @@ async def test_numeric_state_sensor(
     """Test the numeric state sensor."""
 
     test_label = label_registry.async_create(
-        "test_numeric_state",
+        "test_numeric_state_label",
     )
 
     sensor1_entity_entry = entity_registry.async_get_or_create(
         "sensor", "test_1", "unique", suggested_object_id="test_1"
     )
-    sensor1_entity_entry.labels.add(test_label.label_id)
+    await hass.async_block_till_done()
+    sensor1_entity_entry = entity_registry.async_update_entity(
+        sensor1_entity_entry.entity_id, labels={test_label.label_id}
+    )
     await hass.async_block_till_done()
     assert sensor1_entity_entry.entity_id == "sensor.test_1"
     assert test_label.label_id in sensor1_entity_entry.labels
@@ -139,7 +154,10 @@ async def test_numeric_state_sensor(
     sensor2_entity_entry = entity_registry.async_get_or_create(
         "sensor", "test_2", "unique", suggested_object_id="test_2"
     )
-    sensor2_entity_entry.labels.add(test_label.label_id)
+    await hass.async_block_till_done()
+    sensor2_entity_entry = entity_registry.async_update_entity(
+        sensor2_entity_entry.entity_id, labels={test_label.label_id}
+    )
     await hass.async_block_till_done()
     assert sensor2_entity_entry.entity_id == "sensor.test_2"
     assert test_label.label_id in sensor2_entity_entry.labels
