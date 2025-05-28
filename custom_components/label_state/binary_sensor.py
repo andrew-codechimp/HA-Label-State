@@ -274,54 +274,50 @@ class LabelStateBinarySensor(BinarySensorEntity):
                             entity_state
                             and entity_state != STATE_UNKNOWN
                             and entity_state != STATE_UNAVAILABLE
-                            and self._state_lower_limit is not None
-                            and self._state_upper_limit is not None
                         ):
                             if (
-                                float(entity_state) < self._state_lower_limit
-                                or float(entity_state) > self._state_upper_limit
+                                self._state_lower_limit is not None
+                                and self._state_upper_limit is not None
                             ):
-                                state_is_on = True
-                                entities_on.append(entity_id)
-                                LOGGER.debug(
-                                    "State %s is below lower limit %s and above upper limit %s for %s",
-                                    entity_state,
-                                    self._state_lower_limit,
-                                    self._state_upper_limit,
-                                    entity_id,
-                                )
-                        else:
-                            if (
-                                entity_state
-                                and entity_state != STATE_UNKNOWN
-                                and entity_state != STATE_UNAVAILABLE
-                                and self._state_lower_limit
-                                and float(entity_state) < self._state_lower_limit
-                            ):
-                                state_is_on = True
-                                entities_on.append(entity_id)
-                                LOGGER.debug(
-                                    "State %s is below lower limit %s for %s",
-                                    entity_state,
-                                    self._state_lower_limit,
-                                    entity_id,
-                                )
+                                if (
+                                    float(entity_state) < self._state_lower_limit
+                                    or float(entity_state) > self._state_upper_limit
+                                ):
+                                    state_is_on = True
+                                    entities_on.append(entity_id)
+                                    LOGGER.debug(
+                                        "State %s is below lower limit %s and above upper limit %s for %s",
+                                        entity_state,
+                                        self._state_lower_limit,
+                                        self._state_upper_limit,
+                                        entity_id,
+                                    )
+                            else:
+                                if (
+                                    self._state_lower_limit
+                                    and float(entity_state) < self._state_lower_limit
+                                ):
+                                    state_is_on = True
+                                    entities_on.append(entity_id)
+                                    LOGGER.debug(
+                                        "State %s is below lower limit %s for %s",
+                                        entity_state,
+                                        self._state_lower_limit,
+                                        entity_id,
+                                    )
 
-                            if (
-                                entity_state
-                                and entity_state != STATE_UNKNOWN
-                                and entity_state != STATE_UNAVAILABLE
-                                and self._state_upper_limit
-                                and float(entity_state) > self._state_upper_limit
-                            ):
-                                state_is_on = True
-                                entities_on.append(entity_id)
-                                LOGGER.debug(
-                                    "State %s is above upper limit %s for %s",
-                                    entity_state,
-                                    self._state_upper_limit,
-                                    entity_id,
-                                )
+                                if (
+                                    self._state_upper_limit
+                                    and float(entity_state) > self._state_upper_limit
+                                ):
+                                    state_is_on = True
+                                    entities_on.append(entity_id)
+                                    LOGGER.debug(
+                                        "State %s is above upper limit %s for %s",
+                                        entity_state,
+                                        self._state_upper_limit,
+                                        entity_id,
+                                    )
 
                     except ValueError:
                         LOGGER.error(
