@@ -33,10 +33,12 @@ LAST_VALUE = VALUES_NUMERIC[-1]
         "state_2",
         "state_3",
         "expected_state",
+        "later_expected_state",
     ),
     [
         (
             "unavailable",
+            "on",
             "on",
             "on",
             "on",
@@ -46,6 +48,14 @@ LAST_VALUE = VALUES_NUMERIC[-1]
             "on",
             "on",
             "off",
+            "off",
+        ),
+        (
+            "off",
+            "off",
+            "unavailable",
+            "off",
+            "on",
         ),
     ],
 )
@@ -55,6 +65,7 @@ async def test_state_sensor(
     state_2: str,
     state_3: str,
     expected_state: str,
+    later_expected_state: str,
     entity_registry: er.EntityRegistry,
     label_registry: lr.LabelRegistry,
 ) -> None:
@@ -127,7 +138,7 @@ async def test_state_sensor(
     state = hass.states.get("binary_sensor.test_state")
 
     assert state is not None
-    assert state.state == expected_state
+    assert state.state == later_expected_state
 
 
 @pytest.mark.parametrize(
