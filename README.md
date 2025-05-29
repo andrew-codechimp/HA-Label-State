@@ -8,6 +8,8 @@
 
 Label State Helpers for Home Assistant
 
+⚠️ This is currently in early testing, use at your own risk.
+
 You can create both state and numeric state helpers which provide a binary sensor that turns on if any entity with an assigned label matches the criteria you specify.
 
 An `entities` attribute is available which lists all entities that match the criteria.
