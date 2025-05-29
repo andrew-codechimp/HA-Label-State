@@ -150,6 +150,12 @@ class LabelStateBinarySensor(BinarySensorEntity):
         entries = er.async_entries_for_label(ent_reg, self._label)
 
         for entity_entry in entries:
+            if entity_entry.entity_id == self.entity_id:
+                LOGGER.debug(
+                    "We don't watch ourself %s",
+                    entity_entry.entity_id,
+                )
+                continue
             for label in entity_entry.labels:
                 if label == self._label:
                     LOGGER.debug(
@@ -200,20 +206,27 @@ class LabelStateBinarySensor(BinarySensorEntity):
             # Get the entity, check it's current labels
             entity_registry = er.async_get(self.hass)
             entity_entry = entity_registry.async_get(data["entity_id"])
+
             if entity_entry and self._label in entity_entry.labels:
-                # The entity has a label, ensure we listen to it
-                self.async_on_remove(
-                    async_track_state_change_event(
-                        self.hass,
+                if entity_entry.entity_id == self.entity_id:
+                    LOGGER.debug(
+                        "We don't watch ourself %s",
                         entity_entry.entity_id,
-                        self._async_state_listener,
                     )
-                )
-                LOGGER.debug(
-                    "Found label %s in entity %s",
-                    self._label,
-                    entity_entry.entity_id,
-                )
+                else:
+                    # The entity has a label, ensure we listen to it
+                    self.async_on_remove(
+                        async_track_state_change_event(
+                            self.hass,
+                            entity_entry.entity_id,
+                            self._async_state_listener,
+                        )
+                    )
+                    LOGGER.debug(
+                        "Found label %s in entity %s",
+                        self._label,
+                        entity_entry.entity_id,
+                    )
 
             self._calc_state()
             self.async_write_ha_state()
