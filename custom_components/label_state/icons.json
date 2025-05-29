@@ -1,7 +1,0 @@
-{
-  "services": {
-    "reset": {
-      "service": "mdi:refresh"
-    }
-  }
-}
