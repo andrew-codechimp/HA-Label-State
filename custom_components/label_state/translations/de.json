@@ -61,6 +61,7 @@
         "state_to": {
             "options": {
                 "unavailable": "Unavailable",
+                "unknown": "Unknown",
                 "on": "On",
                 "off": "Off"
             }
