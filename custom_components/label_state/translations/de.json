@@ -56,5 +56,14 @@
                 }
             }
         }
+    },
+    "selector": {
+        "state_to": {
+            "options": {
+                "unavailable": "Unavailable",
+                "on": "On",
+                "off": "Off"
+            }
+        }
     }
 }

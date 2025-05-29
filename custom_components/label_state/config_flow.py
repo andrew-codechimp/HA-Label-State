@@ -30,6 +30,11 @@ STATE_TYPES = [
     "state",
 ]
 
+STATE_TO_UNAVAILABLE = "unavailable"
+STATE_TO_ON = "on"
+STATE_TO_OFF = "off"
+STATE_TO_OPTIONS = [STATE_TO_UNAVAILABLE, STATE_TO_ON, STATE_TO_OFF]
+
 
 OPTIONS_SCHEMA_NUMERIC_STATE = vol.Schema(
     {
@@ -50,7 +55,13 @@ OPTIONS_SCHEMA_NUMERIC_STATE = vol.Schema(
 OPTIONS_SCHEMA_STATE = vol.Schema(
     {
         vol.Required(CONF_LABEL): selector.LabelSelector(),
-        vol.Required(CONF_STATE_TO): selector.TextSelector(),
+        vol.Required(CONF_STATE_TO): selector.SelectSelector(
+            selector.SelectSelectorConfig(
+                options=STATE_TO_OPTIONS,
+                translation_key="state_to",
+                custom_value=True,
+            )
+        ),
     }
 )
 
