@@ -43,16 +43,32 @@ Installation via HACS is recommended, but a manual setup is supported.
 </details>
 
 ## Tips
-To create a notification message listing the entities use the state_attr, replacing the binary sensor with your own.
+
+To create a notification automation listing the entities use the state_attr, replacing the binary sensor with your own.  
+I like to have the trigger only activate if a labelled sensor has been unavailable for 5 minutes to avoid any planned restarts falsely triggering the automation.
 
 ```
-action: persistent_notification.create
-metadata: {}
-data:
-  message: >-
-    Critical sensors are unavailable {{
-    state_attr('binary_sensor.critical_sensors_unavailable', 'entities') |
-    join(', ') }}
+alias: Critical Sensors Unavailable
+description: ""
+triggers:
+  - trigger: state
+    entity_id:
+      - binary_sensor.critical_sensor_notification
+    to: "on"
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+conditions: []
+actions:
+  - action: persistent_notification.create
+    metadata: {}
+    data:
+      message: >-
+        Critical sensors are unavailable {{
+        state_attr('binary_sensor.critical_sensor_notification', 'entities') |
+        join(', ') }}
+mode: single
 ```
 
 ### Translations
