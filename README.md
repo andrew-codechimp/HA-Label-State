@@ -19,6 +19,10 @@ An `entities` attribute is available which lists all entities that match the cri
 - Create a critical sensors label and create a Label State helper which turns on when any of those entities goes unavailable so you can get a notification.
 - If you have appliances which should always draw a certain wattage create a numeric Label State helper to turn on when any of those devices starts drawing 0 watts, triggering a notification.
 
+![Helper State](https://raw.githubusercontent.com/andrew-codechimp/ha-label-state/main/images/label_state.png "Helper Label State")
+
+![Helper Numeric](https://raw.githubusercontent.com/andrew-codechimp/ha-label-state/main/images/label_state_numeric.png "Helper Label Numeric State")
+
 ## Installation
 
 ### HACS
