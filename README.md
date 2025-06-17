@@ -44,6 +44,12 @@ Installation via HACS is recommended, but a manual setup is supported.
 
 </details>
 
+## Usage
+
+A new Label State helper will be available within Settings/Helpers or click the My link to jump straight there
+
+[![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=label_state)
+
 ## Tips
 
 Use the example below to create a notification automation listing the entities using the state_attr, replace the binary sensor with your own.  
