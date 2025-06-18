@@ -12,16 +12,16 @@ You can create state, not state and numeric state helpers which provide a binary
 
 An `entities` attribute is available which lists all entities that match the criteria.
 
-_Please :star: this repo if you find it useful_  
-_If you want to show your support please_
-
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png)](https://www.buymeacoffee.com/codechimp)
-
 ## Example use cases
 
 - Create a `critical sensors` label and create a State type Label State helper which turns on when any of those entities goes unavailable so you can get a notification.
 - Create a `must be on` label and create a Not State type Label State helper which turns on when any of those entities goes to any state but on so you can get a notification.
 - If you have appliances which should always draw a certain wattage create a Numeric State type Label State helper to turn on when any of those devices starts drawing 0 watts, triggering a notification.
+
+_Please :star: this repo if you find it useful_  
+_If you want to show your support please_
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png)](https://www.buymeacoffee.com/codechimp)
 
 ![Helper State](https://raw.githubusercontent.com/andrew-codechimp/ha-label-state/main/images/label_state.png "Helper Label State")
 
