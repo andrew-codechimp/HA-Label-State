@@ -26,6 +26,7 @@ PLATFORMS = [Platform.BINARY_SENSOR]
 CONF_LABEL = "label"
 CONF_STATE_TYPE = "state_type"
 CONF_STATE_TO = "state_to"
+CONF_STATE_NOT = "state_not"
 CONF_STATE_LOWER_LIMIT = "state_lower_limit"
 CONF_STATE_UPPER_LIMIT = "state_upper_limit"
 
@@ -37,3 +38,4 @@ class StateTypes(StrEnum):
 
     NUMERIC_STATE = "numeric_state"
     STATE = "state"
+    NOT_STATE = "state_not"
