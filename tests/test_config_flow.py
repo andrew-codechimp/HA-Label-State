@@ -13,6 +13,7 @@ from homeassistant.data_entry_flow import FlowResultType
 from custom_components.label_state.const import (
     CONF_LABEL,
     CONF_STATE_LOWER_LIMIT,
+    CONF_STATE_NOT,
     CONF_STATE_TO,
     CONF_STATE_TYPE,
     CONF_STATE_UPPER_LIMIT,
@@ -26,6 +27,7 @@ from custom_components.label_state.const import (
         "state_type",
         "label",
         "state_to",
+        "state_not",
         "state_lower_limit",
         "state_upper_limit",
     ),
@@ -37,11 +39,22 @@ from custom_components.label_state.const import (
             "unavailable",
             None,
             None,
+            None,
+        ),
+        (
+            "On",
+            "state_not",
+            "my_label",
+            None,
+            "on",
+            None,
+            None,
         ),
         (
             "Numeric State",
             "numeric_state",
             "my_label",
+            None,
             None,
             10,
             20,
@@ -54,6 +67,7 @@ async def test_config_flow(
     state_type: str,
     label: str,
     state_to: str | None,
+    state_not: str | None,
     state_lower_limit: float | None,
     state_upper_limit: float | None,
     mock_setup_entry: AsyncMock,
@@ -81,7 +95,7 @@ async def test_config_flow(
                 CONF_STATE_UPPER_LIMIT: state_upper_limit,
             },
         )
-    else:
+    elif state_type == "state":
         result = await hass.config_entries.flow.async_configure(
             form_step["flow_id"],
             {
@@ -90,6 +104,16 @@ async def test_config_flow(
                 CONF_STATE_TO: state_to,
             },
         )
+    elif state_type == "state_not":
+        result = await hass.config_entries.flow.async_configure(
+            form_step["flow_id"],
+            {
+                CONF_NAME: name,
+                CONF_LABEL: label,
+                CONF_STATE_NOT: state_not,
+            },
+        )
+
     await hass.async_block_till_done()
 
     assert result.get("type") is FlowResultType.CREATE_ENTRY
@@ -103,12 +127,19 @@ async def test_config_flow(
             CONF_STATE_LOWER_LIMIT: state_lower_limit,
             CONF_STATE_UPPER_LIMIT: state_upper_limit,
         }
-    else:
+    elif state_type == "state":
         assert result.get("options") == {
             CONF_NAME: name,
             CONF_STATE_TYPE: state_type,
             CONF_LABEL: label,
             CONF_STATE_TO: state_to,
+        }
+    elif state_type == "state_not":
+        assert result.get("options") == {
+            CONF_NAME: name,
+            CONF_STATE_TYPE: state_type,
+            CONF_LABEL: label,
+            CONF_STATE_NOT: state_not,
         }
 
     assert len(mock_setup_entry.mock_calls) == 1

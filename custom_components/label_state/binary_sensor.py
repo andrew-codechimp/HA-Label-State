@@ -24,6 +24,7 @@ from .const import (
     ATTR_ENTITIES,
     CONF_LABEL,
     CONF_STATE_LOWER_LIMIT,
+    CONF_STATE_NOT,
     CONF_STATE_TO,
     CONF_STATE_TYPE,
     CONF_STATE_UPPER_LIMIT,
@@ -48,6 +49,7 @@ async def async_setup_entry(
     label: str = config_entry.options[CONF_LABEL]
     state_type: str = config_entry.options[CONF_STATE_TYPE]
     state_to: str | None = config_entry.options.get(CONF_STATE_TO)
+    state_not: str | None = config_entry.options.get(CONF_STATE_NOT)
     state_lower_limit: float | None = config_entry.options.get(CONF_STATE_LOWER_LIMIT)
     state_upper_limit: float | None = config_entry.options.get(CONF_STATE_UPPER_LIMIT)
     unique_id = config_entry.entry_id
@@ -64,6 +66,7 @@ async def async_setup_entry(
                 name,
                 state_type,
                 state_to,
+                state_not,
                 state_lower_limit,
                 state_upper_limit,
                 unique_id,
@@ -83,6 +86,7 @@ async def async_setup_platform(
     name: str | None = config.get(CONF_NAME)
     state_type: str = config[CONF_STATE_TYPE]
     state_to: str | None = config.get(CONF_STATE_TO)
+    state_not: str | None = config.get(CONF_STATE_NOT)
     state_lower_limit: float | None = config.get(CONF_STATE_LOWER_LIMIT)
     state_upper_limit: float | None = config.get(CONF_STATE_UPPER_LIMIT)
     unique_id = config.get(CONF_UNIQUE_ID)
@@ -95,6 +99,7 @@ async def async_setup_platform(
                 name,
                 state_type,
                 state_to,
+                state_not,
                 state_lower_limit,
                 state_upper_limit,
                 unique_id,
@@ -118,6 +123,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
         name: str | None,
         state_type: str,
         state_to: str | None,
+        state_not: str | None,
         state_lower_limit: float | None,
         state_upper_limit: float | None,
         unique_id: str | None,
@@ -127,6 +133,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
         self._label = label
         self._state_type = state_type
         self._state_to = state_to
+        self._state_not = state_not
         self._state_lower_limit = state_lower_limit
         self._state_upper_limit = state_upper_limit
         self._attr_name = name
@@ -271,6 +278,21 @@ class LabelStateBinarySensor(BinarySensorEntity):
                         entity_state
                         and self._state_to
                         and entity_state.casefold() == self._state_to.casefold()
+                    ):
+                        state_is_on = True
+                        entities_on.append(entity_id)
+
+        if self._state_type == StateTypes.NOT_STATE:
+            for entity_id in self._state_dict.keys():
+                # Check if the state still has the label
+                entity_entry = entity_registry.async_get(entity_id)
+                if entity_entry and self._label in entity_entry.labels:
+                    entity_state = self._state_dict[entity_id]
+
+                    if (
+                        entity_state
+                        and self._state_not
+                        and entity_state.casefold() != self._state_not.casefold()
                     ):
                         state_is_on = True
                         entities_on.append(entity_id)

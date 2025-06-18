@@ -18,6 +18,7 @@ from homeassistant.helpers.schema_config_entry_flow import (
 from .const import (
     CONF_LABEL,
     CONF_STATE_LOWER_LIMIT,
+    CONF_STATE_NOT,
     CONF_STATE_TO,
     CONF_STATE_TYPE,
     CONF_STATE_UPPER_LIMIT,
@@ -25,16 +26,14 @@ from .const import (
     StateTypes,
 )
 
-STATE_TYPES = [
-    "numeric_state",
-    "state",
-]
+STATE_TYPES = ["numeric_state", "state", "state_not"]
 
 STATE_TO_UNAVAILABLE = "unavailable"
 STATE_TO_UNKNOWN = "unknown"
-STATE_TO_ON = "on"
-STATE_TO_OFF = "off"
-STATE_TO_OPTIONS = [STATE_TO_UNAVAILABLE, STATE_TO_UNKNOWN, STATE_TO_ON, STATE_TO_OFF]
+STATE_ON = "on"
+STATE_OFF = "off"
+STATE_TO_OPTIONS = [STATE_TO_UNAVAILABLE, STATE_TO_UNKNOWN, STATE_ON, STATE_OFF]
+STATE_NOT_OPTIONS = [STATE_ON, STATE_OFF]
 
 
 OPTIONS_SCHEMA_NUMERIC_STATE = vol.Schema(
@@ -66,6 +65,19 @@ OPTIONS_SCHEMA_STATE = vol.Schema(
     }
 )
 
+OPTIONS_SCHEMA_NOT_STATE = vol.Schema(
+    {
+        vol.Required(CONF_LABEL): selector.LabelSelector(),
+        vol.Required(CONF_STATE_NOT): selector.SelectSelector(
+            selector.SelectSelectorConfig(
+                options=STATE_NOT_OPTIONS,
+                translation_key="state_not",
+                custom_value=True,
+            )
+        ),
+    }
+)
+
 CONFIG_SCHEMA_NUMERIC_STATE = vol.Schema(
     {
         vol.Required("name"): selector.TextSelector(),
@@ -77,6 +89,12 @@ CONFIG_SCHEMA_STATE = vol.Schema(
         vol.Required("name"): selector.TextSelector(),
     }
 ).extend(OPTIONS_SCHEMA_STATE.schema)
+
+CONFIG_SCHEMA_NOT_STATE = vol.Schema(
+    {
+        vol.Required("name"): selector.TextSelector(),
+    }
+).extend(OPTIONS_SCHEMA_NOT_STATE.schema)
 
 
 async def choose_options_step(options: dict[str, Any]) -> str:
@@ -128,6 +146,10 @@ CONFIG_FLOW = {
         CONFIG_SCHEMA_STATE,
         validate_user_input=validate_user_input(StateTypes.STATE),
     ),
+    StateTypes.NOT_STATE: SchemaFlowFormStep(
+        CONFIG_SCHEMA_NOT_STATE,
+        validate_user_input=validate_user_input(StateTypes.NOT_STATE),
+    ),
 }
 
 
@@ -139,6 +161,10 @@ OPTIONS_FLOW = {
     ),
     StateTypes.STATE: SchemaFlowFormStep(
         OPTIONS_SCHEMA_STATE, validate_user_input=validate_user_input(StateTypes.STATE)
+    ),
+    StateTypes.NOT_STATE: SchemaFlowFormStep(
+        OPTIONS_SCHEMA_NOT_STATE,
+        validate_user_input=validate_user_input(StateTypes.NOT_STATE),
     ),
 }
 

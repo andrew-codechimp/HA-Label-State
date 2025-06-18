@@ -8,14 +8,15 @@
 
 Label State Helpers for Home Assistant
 
-You can create both state and numeric state helpers which provide a binary sensor that turns on if any entity with an assigned label matches the criteria you specify.
+You can create state, not state and numeric state helpers which provide a binary sensor that turns on if any entity with an assigned label matches the criteria you specify.
 
 An `entities` attribute is available which lists all entities that match the criteria.
 
 ## Example use cases
 
-- Create a critical sensors label and create a Label State helper which turns on when any of those entities goes unavailable so you can get a notification.
-- If you have appliances which should always draw a certain wattage create a numeric Label State helper to turn on when any of those devices starts drawing 0 watts, triggering a notification.
+- Create a `critical sensors` label and create a State type Label State helper which turns on when any of those entities goes unavailable so you can get a notification.
+- Create a `must be on` label and create a Not State type Label State helper which turns on when any of those entities goes to any state but on so you can get a notification.
+- If you have appliances which should always draw a certain wattage create a Numeric State type Label State helper to turn on when any of those devices starts drawing 0 watts, triggering a notification.
 
 ![Helper State](https://raw.githubusercontent.com/andrew-codechimp/ha-label-state/main/images/label_state.png "Helper Label State")
 

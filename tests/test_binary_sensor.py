@@ -128,6 +128,120 @@ async def test_state_sensor(
     (
         "state_1",
         "state_2",
+        "state_3",
+        "expected_state",
+        "later_expected_state",
+    ),
+    [
+        (
+            "on",
+            "on",
+            "off",
+            "off",
+            "on",
+        ),
+        (
+            "on",
+            "on",
+            "on",
+            "off",
+            "off",
+        ),
+        (
+            "off",
+            "off",
+            "on",
+            "on",
+            "on",
+        ),
+    ],
+)
+async def test_state_not_sensor(
+    hass: HomeAssistant,
+    state_1: str,
+    state_2: str,
+    state_3: str,
+    expected_state: str,
+    later_expected_state: str,
+    entity_registry: er.EntityRegistry,
+    label_registry: lr.LabelRegistry,
+) -> None:
+    """Test the not state sensor."""
+
+    test_label = label_registry.async_create(
+        "test",
+    )
+
+    sensor1_entity_entry = entity_registry.async_get_or_create(
+        "sensor", "test_1", "unique", suggested_object_id="test_1"
+    )
+    await hass.async_block_till_done()
+    sensor1_entity_entry = entity_registry.async_update_entity(
+        sensor1_entity_entry.entity_id, labels={test_label.label_id}
+    )
+    await hass.async_block_till_done()
+    assert sensor1_entity_entry.entity_id == "sensor.test_1"
+
+    sensor2_entity_entry = entity_registry.async_get_or_create(
+        "sensor", "test_2", "unique", suggested_object_id="test_2"
+    )
+    await hass.async_block_till_done()
+    sensor2_entity_entry = entity_registry.async_update_entity(
+        sensor2_entity_entry.entity_id, labels={test_label.label_id}
+    )
+    await hass.async_block_till_done()
+    assert sensor2_entity_entry.entity_id == "sensor.test_2"
+
+    config = MockConfigEntry(
+        domain="label_state",
+        data={},
+        options={
+            "name": "test_state",
+            "label": test_label.label_id,
+            "state_type": "state_not",
+            "state_not": "on",
+        },
+        title="test_state",
+    )
+
+    await setup_integration(hass, config)
+    await hass.async_block_till_done()
+
+    hass.states.async_set(sensor1_entity_entry.entity_id, state_1)
+    await hass.async_block_till_done()
+
+    hass.states.async_set(sensor2_entity_entry.entity_id, state_2)
+    await hass.async_block_till_done()
+
+    state = hass.states.get("binary_sensor.test_state")
+
+    assert state is not None
+    assert state.state == expected_state
+
+    # Add a third sensor to test the listener change
+    sensor3_entity_entry = entity_registry.async_get_or_create(
+        "sensor", "test_3", "unique", suggested_object_id="test_3"
+    )
+    await hass.async_block_till_done()
+    sensor3_entity_entry = entity_registry.async_update_entity(
+        sensor3_entity_entry.entity_id, labels={test_label.label_id}
+    )
+    await hass.async_block_till_done()
+    assert sensor3_entity_entry.entity_id == "sensor.test_3"
+
+    hass.states.async_set(sensor3_entity_entry.entity_id, state_3)
+    await hass.async_block_till_done()
+
+    state = hass.states.get("binary_sensor.test_state")
+
+    assert state is not None
+    assert state.state == later_expected_state
+
+
+@pytest.mark.parametrize(
+    (
+        "state_1",
+        "state_2",
         "state_lower_limit",
         "state_upper_limit",
         "expected_state",
