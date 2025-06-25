@@ -11,6 +11,7 @@ from homeassistant.const import (
     STATE_UNKNOWN,
 )
 from homeassistant.core import Event, EventStateChangedData, HomeAssistant, callback
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity_platform import (
     AddConfigEntryEntitiesCallback,
@@ -22,6 +23,7 @@ from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
 from .const import (
     ATTR_ENTITIES,
+    ATTR_FRIENDLY_NAMES,
     CONF_LABEL,
     CONF_STATE_LOWER_LIMIT,
     CONF_STATE_NOT,
@@ -264,6 +266,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
 
         state_is_on: bool | None = False
         entities_on: list[str] = []
+        friendly_names: list[str] = []
 
         entity_registry = er.async_get(self.hass)
 
@@ -281,6 +284,8 @@ class LabelStateBinarySensor(BinarySensorEntity):
                     ):
                         state_is_on = True
                         entities_on.append(entity_id)
+                        name = self._get_device_or_entity_name(entity_id)
+                        friendly_names.append(name)
 
         if self._state_type == StateTypes.NOT_STATE:
             for entity_id in self._state_dict.keys():
@@ -296,6 +301,8 @@ class LabelStateBinarySensor(BinarySensorEntity):
                     ):
                         state_is_on = True
                         entities_on.append(entity_id)
+                        name = self._get_device_or_entity_name(entity_id)
+                        friendly_names.append(name)
 
         if self._state_type == StateTypes.NUMERIC_STATE:
             for entity_id in self._state_dict.keys():
@@ -320,6 +327,9 @@ class LabelStateBinarySensor(BinarySensorEntity):
                                 ):
                                     state_is_on = True
                                     entities_on.append(entity_id)
+                                    name = self._get_device_or_entity_name(entity_id)
+                                    friendly_names.append(name)
+
                                     LOGGER.debug(
                                         "State %s is below lower limit %s and above upper limit %s for %s",
                                         entity_state,
@@ -334,6 +344,9 @@ class LabelStateBinarySensor(BinarySensorEntity):
                                 ):
                                     state_is_on = True
                                     entities_on.append(entity_id)
+                                    name = self._get_device_or_entity_name(entity_id)
+                                    friendly_names.append(name)
+
                                     LOGGER.debug(
                                         "State %s is below lower limit %s for %s",
                                         entity_state,
@@ -347,6 +360,9 @@ class LabelStateBinarySensor(BinarySensorEntity):
                                 ):
                                     state_is_on = True
                                     entities_on.append(entity_id)
+                                    name = self._get_device_or_entity_name(entity_id)
+                                    friendly_names.append(name)
+
                                     LOGGER.debug(
                                         "State %s is above upper limit %s for %s",
                                         entity_state,
@@ -368,3 +384,20 @@ class LabelStateBinarySensor(BinarySensorEntity):
 
         self._attr_is_on = state_is_on
         self._attr_extra_state_attributes[ATTR_ENTITIES] = entities_on
+        self._attr_extra_state_attributes[ATTR_FRIENDLY_NAMES] = friendly_names
+
+    def _get_device_or_entity_name(
+        self,
+        entity_id: str,
+    ) -> str:
+        """Get the device or entity name."""
+        entity_registry = er.async_get(self.hass)
+        entity_entry = entity_registry.async_get(entity_id)
+        if not entity_entry:
+            return entity_id
+        if entity_entry.device_id:
+            device_registry = dr.async_get(self.hass)
+            device_entry = device_registry.async_get(device_id=entity_entry.device_id)
+            if device_entry is not None:
+                return f"{device_entry.name_by_user or device_entry.name} ({entity_entry.name or entity_entry.original_name or entity_id})"
+        return entity_entry.name or entity_entry.original_name or entity_id
