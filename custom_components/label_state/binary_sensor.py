@@ -299,7 +299,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
                 fireable,
             )
             signal = f"{DOMAIN}-{self.unique_id}"
-            dispatcher_send(self.hass, signal, event.event_type, fireable)
+            dispatcher_send(self.hass, signal, EVENT_LABEL_STATE_UPDATED, fireable)
 
     @callback
     def _calc_state(self) -> None:
