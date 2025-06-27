@@ -21,7 +21,7 @@ VERSION = manifest_data.get("version")
 ISSUEURL = manifest_data.get("issue_tracker")
 CONFIG_VERSION = 1
 
-PLATFORMS = [Platform.BINARY_SENSOR]
+PLATFORMS = [Platform.BINARY_SENSOR, Platform.EVENT]
 
 CONF_LABEL = "label"
 CONF_STATE_TYPE = "state_type"

@@ -16,6 +16,7 @@ from homeassistant.const import (
 from homeassistant.core import Event, EventStateChangedData, HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers.dispatcher import dispatcher_send
 from homeassistant.helpers.entity_platform import (
     AddConfigEntryEntitiesCallback,
     AddEntitiesCallback,
@@ -33,6 +34,7 @@ from .const import (
     CONF_STATE_TO,
     CONF_STATE_TYPE,
     CONF_STATE_UPPER_LIMIT,
+    DOMAIN,
     EVENT_LABEL_STATE_UPDATED,
     LOGGER,
     StateTypes,
@@ -154,6 +156,12 @@ class LabelStateBinarySensor(BinarySensorEntity):
             }
         )
 
+        self._attr_device_info = dr.DeviceInfo(
+            identifiers={(DOMAIN, unique_id)},
+            name=name,
+            manufacturer="Label State",
+        )
+
     async def async_added_to_hass(self) -> None:
         """Handle added to Hass."""
 
@@ -264,18 +272,34 @@ class LabelStateBinarySensor(BinarySensorEntity):
         if update_state:
             self.async_write_ha_state()
 
-            self.hass.bus.async_fire(
-                EVENT_LABEL_STATE_UPDATED,
-                {
-                    ATTR_ENTITY_ID: self.entity_id,
-                    ATTR_NAME: self.name,
-                    ATTR_STATE: self._attr_is_on,
-                    ATTR_ENTITIES: self._attr_extra_state_attributes[ATTR_ENTITIES],
-                    ATTR_FRIENDLY_NAMES: self._attr_extra_state_attributes[
-                        ATTR_FRIENDLY_NAMES
-                    ],
-                },
+            # self.hass.bus.async_fire(
+            #     EVENT_LABEL_STATE_UPDATED,
+            #     {
+            #         ATTR_ENTITY_ID: self.entity_id,
+            #         ATTR_NAME: self.name,
+            #         ATTR_STATE: self._attr_is_on,
+            #         ATTR_ENTITIES: self._attr_extra_state_attributes[ATTR_ENTITIES],
+            #         ATTR_FRIENDLY_NAMES: self._attr_extra_state_attributes[
+            #             ATTR_FRIENDLY_NAMES
+            #         ],
+            #     },
+            # )
+
+            fireable = {
+                "event_type": EVENT_LABEL_STATE_UPDATED,
+                ATTR_STATE: self._attr_is_on,
+                ATTR_ENTITIES: self._attr_extra_state_attributes[ATTR_ENTITIES],
+                ATTR_FRIENDLY_NAMES: self._attr_extra_state_attributes[
+                    ATTR_FRIENDLY_NAMES
+                ],
+            }
+
+            self.hass.bus.fire(
+                DOMAIN,
+                fireable,
             )
+            signal = f"{DOMAIN}-{self.unique_id}"
+            dispatcher_send(self.hass, signal, event.event_type, fireable)
 
     @callback
     def _calc_state(self) -> None:
