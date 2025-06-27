@@ -5,6 +5,9 @@ from __future__ import annotations
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
+    ATTR_ENTITY_ID,
+    ATTR_NAME,
+    ATTR_STATE,
     CONF_NAME,
     CONF_UNIQUE_ID,
     STATE_UNAVAILABLE,
@@ -30,6 +33,7 @@ from .const import (
     CONF_STATE_TO,
     CONF_STATE_TYPE,
     CONF_STATE_UPPER_LIMIT,
+    EVENT_LABEL_STATE_UPDATED,
     LOGGER,
     StateTypes,
 )
@@ -259,6 +263,19 @@ class LabelStateBinarySensor(BinarySensorEntity):
 
         if update_state:
             self.async_write_ha_state()
+
+            self.hass.bus.async_fire(
+                EVENT_LABEL_STATE_UPDATED,
+                {
+                    ATTR_ENTITY_ID: self.entity_id,
+                    ATTR_NAME: self.name,
+                    ATTR_STATE: self._attr_is_on,
+                    ATTR_ENTITIES: self._attr_extra_state_attributes[ATTR_ENTITIES],
+                    ATTR_FRIENDLY_NAMES: self._attr_extra_state_attributes[
+                        ATTR_FRIENDLY_NAMES
+                    ],
+                },
+            )
 
     @callback
     def _calc_state(self) -> None:

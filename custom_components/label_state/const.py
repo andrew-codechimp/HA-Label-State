@@ -30,6 +30,8 @@ CONF_STATE_NOT = "state_not"
 CONF_STATE_LOWER_LIMIT = "state_lower_limit"
 CONF_STATE_UPPER_LIMIT = "state_upper_limit"
 
+EVENT_LABEL_STATE_UPDATED = "label_state_updated"
+
 ATTR_ENTITIES = "entities"
 ATTR_FRIENDLY_NAMES = "friendly_names"
 
