@@ -287,9 +287,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
                 "event_type": EVENT_LABEL_STATE_UPDATED,
                 ATTR_STATE: "on" if self._attr_is_on else "off",
                 ATTR_ENTITIES: self._attr_extra_state_attributes[ATTR_ENTITIES],
-                ATTR_FRIENDLY_NAMES: self._attr_extra_state_attributes[
-                    ATTR_FRIENDLY_NAMES
-                ],
+                ATTR_ENTITY_NAMES: self._attr_extra_state_attributes[ATTR_ENTITY_NAMES],
             }
 
             self.hass.bus.fire(
