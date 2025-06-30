@@ -23,7 +23,7 @@ from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
 from .const import (
     ATTR_ENTITIES,
-    ATTR_FRIENDLY_NAMES,
+    ATTR_ENTITY_NAMES,
     CONF_LABEL,
     CONF_STATE_LOWER_LIMIT,
     CONF_STATE_NOT,
@@ -266,7 +266,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
 
         state_is_on: bool | None = False
         entities_on: list[str] = []
-        friendly_names: list[str] = []
+        entity_names: list[str] = []
 
         entity_registry = er.async_get(self.hass)
 
@@ -285,7 +285,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
                         state_is_on = True
                         entities_on.append(entity_id)
                         name = self._get_device_or_entity_name(entity_id)
-                        friendly_names.append(name)
+                        entity_names.append(name)
 
         if self._state_type == StateTypes.NOT_STATE:
             for entity_id in self._state_dict.keys():
@@ -302,7 +302,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
                         state_is_on = True
                         entities_on.append(entity_id)
                         name = self._get_device_or_entity_name(entity_id)
-                        friendly_names.append(name)
+                        entity_names.append(name)
 
         if self._state_type == StateTypes.NUMERIC_STATE:
             for entity_id in self._state_dict.keys():
@@ -328,7 +328,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
                                     state_is_on = True
                                     entities_on.append(entity_id)
                                     name = self._get_device_or_entity_name(entity_id)
-                                    friendly_names.append(name)
+                                    entity_names.append(name)
 
                                     LOGGER.debug(
                                         "State %s is below lower limit %s and above upper limit %s for %s",
@@ -345,7 +345,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
                                     state_is_on = True
                                     entities_on.append(entity_id)
                                     name = self._get_device_or_entity_name(entity_id)
-                                    friendly_names.append(name)
+                                    entity_names.append(name)
 
                                     LOGGER.debug(
                                         "State %s is below lower limit %s for %s",
@@ -361,7 +361,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
                                     state_is_on = True
                                     entities_on.append(entity_id)
                                     name = self._get_device_or_entity_name(entity_id)
-                                    friendly_names.append(name)
+                                    entity_names.append(name)
 
                                     LOGGER.debug(
                                         "State %s is above upper limit %s for %s",
@@ -384,7 +384,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
 
         self._attr_is_on = state_is_on
         self._attr_extra_state_attributes[ATTR_ENTITIES] = entities_on
-        self._attr_extra_state_attributes[ATTR_FRIENDLY_NAMES] = friendly_names
+        self._attr_extra_state_attributes[ATTR_ENTITY_NAMES] = entity_names
 
     def _get_device_or_entity_name(
         self,
