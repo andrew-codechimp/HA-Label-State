@@ -33,7 +33,7 @@ CONF_STATE_UPPER_LIMIT = "state_upper_limit"
 EVENT_LABEL_STATE_UPDATED = "label_state_updated"
 
 ATTR_ENTITIES = "entities"
-ATTR_FRIENDLY_NAMES = "friendly_names"
+ATTR_ENTITY_NAMES = "entity_names"
 
 
 class StateTypes(StrEnum):
