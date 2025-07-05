@@ -203,7 +203,6 @@ class LabelStateBinarySensor(BinarySensorEntity):
         )
 
         self._calc_state()
-        self.async_write_ha_state()
 
     @callback
     def _async_entity_registry_modified(
@@ -238,7 +237,6 @@ class LabelStateBinarySensor(BinarySensorEntity):
                     )
 
             self._calc_state()
-            self.async_write_ha_state()
 
     @callback
     def _async_state_listener(
@@ -255,13 +253,10 @@ class LabelStateBinarySensor(BinarySensorEntity):
             new_state.state if new_state is not None else STATE_UNKNOWN
         )
 
-        self._calc_state()
-
-        if update_state:
-            self.async_write_ha_state()
+        self._calc_state(update_state=update_state)
 
     @callback
-    def _calc_state(self) -> None:
+    def _calc_state(self, update_state: bool = True) -> None:
         """Calculate the state."""
 
         state_is_on: bool | None = False
@@ -382,9 +377,22 @@ class LabelStateBinarySensor(BinarySensorEntity):
             self.entity_id,
         )
 
+        # If entities have changed, toggle the state to off to force a state update
+        if (
+            update_state
+            and state_is_on
+            and self._attr_is_on
+            and self._attr_extra_state_attributes[ATTR_ENTITIES] != entities_on
+        ):
+            self._attr_is_on = False
+            self.async_write_ha_state()
+
         self._attr_is_on = state_is_on
         self._attr_extra_state_attributes[ATTR_ENTITIES] = entities_on
         self._attr_extra_state_attributes[ATTR_ENTITY_NAMES] = entity_names
+
+        if update_state:
+            self.async_write_ha_state()
 
     def _get_device_or_entity_name(
         self,
