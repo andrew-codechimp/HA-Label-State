@@ -124,6 +124,74 @@ async def test_state_sensor(
     assert state.state == later_expected_state
 
 
+async def test_state_sensor_update(
+    hass: HomeAssistant,
+    entity_registry: er.EntityRegistry,
+    label_registry: lr.LabelRegistry,
+) -> None:
+    """Test the state sensor."""
+
+    test_label = label_registry.async_create(
+        "test",
+    )
+
+    sensor1_entity_entry = entity_registry.async_get_or_create(
+        "sensor", "test_1", "unique1", suggested_object_id="test_1"
+    )
+    await hass.async_block_till_done()
+    sensor1_entity_entry = entity_registry.async_update_entity(
+        sensor1_entity_entry.entity_id, labels={test_label.label_id}
+    )
+    await hass.async_block_till_done()
+    assert sensor1_entity_entry.entity_id == "sensor.test_1"
+
+    sensor2_entity_entry = entity_registry.async_get_or_create(
+        "sensor", "test_2", "unique2", suggested_object_id="test_2"
+    )
+    await hass.async_block_till_done()
+    sensor2_entity_entry = entity_registry.async_update_entity(
+        sensor2_entity_entry.entity_id, labels={test_label.label_id}
+    )
+    await hass.async_block_till_done()
+    assert sensor2_entity_entry.entity_id == "sensor.test_2"
+
+    config = MockConfigEntry(
+        domain="label_state",
+        data={},
+        options={
+            "name": "test_state",
+            "label": test_label.label_id,
+            "state_type": "state",
+            "state_to": "unavailable",
+        },
+        title="test_state",
+    )
+
+    await setup_integration(hass, config)
+    await hass.async_block_till_done()
+
+    hass.states.async_set(sensor1_entity_entry.entity_id, "unavailable")
+    await hass.async_block_till_done()
+
+    hass.states.async_set(sensor2_entity_entry.entity_id, "on")
+    await hass.async_block_till_done()
+
+    state = hass.states.get("binary_sensor.test_state")
+
+    assert state is not None
+    assert state.state == "on"
+    assert state.attributes["entities"] == ["sensor.test_1"]
+
+    hass.states.async_set(sensor2_entity_entry.entity_id, "unavailable")
+    await hass.async_block_till_done()
+
+    state = hass.states.get("binary_sensor.test_state")
+
+    assert state is not None
+    assert state.state == "on"
+    assert state.attributes["entities"] == ["sensor.test_1", "sensor.test_2"]
+
+
 @pytest.mark.parametrize(
     (
         "state_1",
