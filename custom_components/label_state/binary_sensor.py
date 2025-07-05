@@ -377,7 +377,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
             self.entity_id,
         )
 
-        # If entities have changed, toggle the state to off to force a state update
+        # If entities have changed, and increased, toggle the state to off to force a state update
         if (
             update_state
             and state_is_on
