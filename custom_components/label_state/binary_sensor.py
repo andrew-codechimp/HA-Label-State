@@ -383,6 +383,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
             and state_is_on
             and self._attr_is_on
             and self._attr_extra_state_attributes[ATTR_ENTITIES] != entities_on
+            and len(entities_on) > len(self._attr_extra_state_attributes[ATTR_ENTITIES])
         ):
             self._attr_is_on = False
             self.async_write_ha_state()
