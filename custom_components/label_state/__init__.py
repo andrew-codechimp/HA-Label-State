@@ -7,17 +7,18 @@ https://github.com/andrew-codechimp/HA-Label-State
 from __future__ import annotations
 
 from awesomeversion.awesomeversion import AwesomeVersion
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import __version__ as HA_VERSION  # noqa: N812
+
 from homeassistant.core import HomeAssistant
+from homeassistant.const import __version__ as HA_VERSION  # noqa: N812
 from homeassistant.helpers import config_validation as cv
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
     DOMAIN,
     LOGGER,
-    MIN_HA_VERSION,
     PLATFORMS,
+    MIN_HA_VERSION,
 )
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
