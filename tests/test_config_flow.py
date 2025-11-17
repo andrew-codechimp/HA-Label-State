@@ -5,20 +5,20 @@ from __future__ import annotations
 from unittest.mock import AsyncMock
 
 import pytest
-from homeassistant import config_entries
-from homeassistant.const import CONF_NAME
-from homeassistant.core import HomeAssistant
-from homeassistant.data_entry_flow import FlowResultType
-
 from custom_components.label_state.const import (
-    CONF_LABEL,
-    CONF_STATE_LOWER_LIMIT,
-    CONF_STATE_NOT,
-    CONF_STATE_TO,
-    CONF_STATE_TYPE,
-    CONF_STATE_UPPER_LIMIT,
     DOMAIN,
+    CONF_LABEL,
+    CONF_STATE_TO,
+    CONF_STATE_NOT,
+    CONF_STATE_TYPE,
+    CONF_STATE_LOWER_LIMIT,
+    CONF_STATE_UPPER_LIMIT,
 )
+
+from homeassistant import config_entries
+from homeassistant.core import HomeAssistant
+from homeassistant.const import CONF_NAME
+from homeassistant.data_entry_flow import FlowResultType
 
 
 @pytest.mark.parametrize(

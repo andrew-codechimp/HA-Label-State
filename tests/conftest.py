@@ -2,21 +2,21 @@
 
 from __future__ import annotations
 
-from collections.abc import Generator
 from typing import Any
 from unittest.mock import AsyncMock, patch
+from collections.abc import Generator
 
 import pytest
-from homeassistant.config_entries import SOURCE_USER
-from homeassistant.const import (
-    CONF_ENTITY_ID,
-    CONF_NAME,
-    CONF_TYPE,
-)
-from homeassistant.core import HomeAssistant
+from custom_components.label_state.const import DOMAIN
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.label_state.const import DOMAIN
+from homeassistant.core import HomeAssistant
+from homeassistant.const import (
+    CONF_NAME,
+    CONF_TYPE,
+    CONF_ENTITY_ID,
+)
+from homeassistant.config_entries import SOURCE_USER
 
 pytest_plugins = "pytest_homeassistant_custom_component"
 
@@ -26,7 +26,7 @@ pytest_plugins = "pytest_homeassistant_custom_component"
 @pytest.fixture(autouse=True)
 def auto_enable_custom_integrations(enable_custom_integrations):
     """Enable loading custom integrations."""
-    yield
+    return
 
 
 @pytest.fixture
