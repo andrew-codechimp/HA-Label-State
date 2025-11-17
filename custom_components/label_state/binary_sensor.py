@@ -2,35 +2,34 @@
 
 from __future__ import annotations
 
-from homeassistant.components.binary_sensor import BinarySensorEntity
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import Event, HomeAssistant, EventStateChangedData, callback
 from homeassistant.const import (
     CONF_NAME,
+    STATE_UNKNOWN,
     CONF_UNIQUE_ID,
     STATE_UNAVAILABLE,
-    STATE_UNKNOWN,
 )
-from homeassistant.core import Event, EventStateChangedData, HomeAssistant, callback
-from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers import device_registry as dr, entity_registry as er
+from homeassistant.helpers.event import async_track_state_change_event
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from homeassistant.helpers.entity_platform import (
-    AddConfigEntryEntitiesCallback,
     AddEntitiesCallback,
+    AddConfigEntryEntitiesCallback,
 )
 from homeassistant.helpers.entity_registry import EVENT_ENTITY_REGISTRY_UPDATED
-from homeassistant.helpers.event import async_track_state_change_event
-from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
+from homeassistant.components.binary_sensor import BinarySensorEntity
 
 from .const import (
-    ATTR_ENTITIES,
-    ATTR_ENTITY_NAMES,
-    CONF_LABEL,
-    CONF_STATE_LOWER_LIMIT,
-    CONF_STATE_NOT,
-    CONF_STATE_TO,
-    CONF_STATE_TYPE,
-    CONF_STATE_UPPER_LIMIT,
     LOGGER,
+    CONF_LABEL,
+    ATTR_ENTITIES,
+    CONF_STATE_TO,
+    CONF_STATE_NOT,
+    CONF_STATE_TYPE,
+    ATTR_ENTITY_NAMES,
+    CONF_STATE_LOWER_LIMIT,
+    CONF_STATE_UPPER_LIMIT,
     StateTypes,
 )
 

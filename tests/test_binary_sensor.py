@@ -1,11 +1,11 @@
 """The test for the label_state binary sensor platform."""
 
 import pytest
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers import entity_registry as er
-from homeassistant.helpers import label_registry as lr
-from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
+
+from homeassistant.core import HomeAssistant
+from homeassistant.setup import async_setup_component
+from homeassistant.helpers import label_registry as lr, entity_registry as er
 
 from . import setup_integration
 
