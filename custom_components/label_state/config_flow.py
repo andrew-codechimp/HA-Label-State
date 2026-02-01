@@ -81,7 +81,11 @@ OPTIONS_SCHEMA_NOT_STATE = vol.Schema(
 
 CONFIG_SCHEMA_NUMERIC_STATE = vol.Schema(
     {
-        vol.Required("name"): selector.TextSelector(),
+        vol.Required("name"): selector.TextSelector(
+            selector.TextSelectorConfig(
+                type=selector.TextSelectorType.TEXT, autocomplete="off"
+            ),
+        )
     }
 ).extend(OPTIONS_SCHEMA_NUMERIC_STATE.schema)
 
