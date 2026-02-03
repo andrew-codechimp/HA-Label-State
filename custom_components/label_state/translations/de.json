@@ -5,7 +5,7 @@
         },
         "step": {
             "user": {
-                "title": "Label State",
+                "title": "Create Label State",
                 "description": "Create a binary sensor that is on if any entity with the label meets the criteria.",
                 "menu_options": {
                     "numeric_state": "Numeric state",
@@ -49,7 +49,7 @@
         },
         "step": {
             "numeric_state": {
-                "title": "Label Numeric State",
+                "title": "Label Numeric State Options",
                 "description": "Create a binary sensor that is on if any entities value with the label is outside of its normal bounds.",
                 "data": {
                     "label": "Label",
@@ -58,7 +58,7 @@
                 }
             },
             "state": {
-                "title": "Label State",
+                "title": "Label State Options",
                 "description": "Create a binary sensor that is on if any entity with the label has the specified state.",
                 "data": {
                     "label": "Label",
@@ -66,7 +66,7 @@
                 }
             },
             "state_not": {
-                "title": "Label Not State",
+                "title": "Label Not State Options",
                 "description": "Create a binary sensor that is on if any entity with the label does not have the specified state.",
                 "data": {
                     "label": "Label",
