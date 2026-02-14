@@ -4,8 +4,8 @@ import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import entity_registry as er, label_registry as lr
 from homeassistant.setup import async_setup_component
-from homeassistant.helpers import label_registry as lr, entity_registry as er
 
 from . import setup_integration
 

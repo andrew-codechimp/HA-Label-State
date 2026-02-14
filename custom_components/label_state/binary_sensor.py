@@ -2,34 +2,40 @@
 
 from __future__ import annotations
 
-from homeassistant.core import Event, HomeAssistant, EventStateChangedData, callback
+from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONF_NAME,
-    STATE_UNKNOWN,
     CONF_UNIQUE_ID,
     STATE_UNAVAILABLE,
+    STATE_UNKNOWN,
 )
-from homeassistant.helpers import device_registry as dr, entity_registry as er
-from homeassistant.helpers.event import async_track_state_change_event
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
+from homeassistant.core import Event, EventStateChangedData, HomeAssistant, callback
+from homeassistant.helpers import (
+    device_registry as dr,
+    entity_registry as er,
+    label_registry as lr,
+)
 from homeassistant.helpers.entity_platform import (
-    AddEntitiesCallback,
     AddConfigEntryEntitiesCallback,
+    AddEntitiesCallback,
 )
 from homeassistant.helpers.entity_registry import EVENT_ENTITY_REGISTRY_UPDATED
-from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.helpers.event import async_track_state_change_event
+from homeassistant.helpers.label_registry import EVENT_LABEL_REGISTRY_UPDATED
+from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
 from .const import (
-    LOGGER,
-    CONF_LABEL,
     ATTR_ENTITIES,
-    CONF_STATE_TO,
-    CONF_STATE_NOT,
-    CONF_STATE_TYPE,
     ATTR_ENTITY_NAMES,
+    ATTR_LABEL_NAME,
+    CONF_LABEL,
     CONF_STATE_LOWER_LIMIT,
+    CONF_STATE_NOT,
+    CONF_STATE_TO,
+    CONF_STATE_TYPE,
     CONF_STATE_UPPER_LIMIT,
+    LOGGER,
     StateTypes,
 )
 
@@ -116,6 +122,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
     _attr_should_poll = False
 
     _state_dict: dict[str, str] = {}
+    _label_name: str = ""
 
     def __init__(
         self,
@@ -131,7 +138,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
     ) -> None:
         """Initialize the label state sensor."""
         self._attr_unique_id = unique_id
-        self._label = label
+        self._label_id = label
         self._state_type = state_type
         self._state_to = state_to
         self._state_not = state_not
@@ -142,11 +149,13 @@ class LabelStateBinarySensor(BinarySensorEntity):
         self._unit_of_measurement_mismatch = False
 
         self._attr_is_on = False
-        self._attr_extra_state_attributes = {}
-        self._attr_extra_state_attributes.update(
-            {
-                ATTR_ENTITIES: [],
-            }
+        self._attr_extra_state_attributes = {
+            ATTR_ENTITIES: [],
+            ATTR_ENTITY_NAMES: [],
+            ATTR_LABEL_NAME: self._label_name,
+        }
+        self._unrecorded_attributes = frozenset(
+            {ATTR_ENTITIES, ATTR_ENTITY_NAMES, ATTR_LABEL_NAME}
         )
 
     async def async_added_to_hass(self) -> None:
@@ -154,8 +163,13 @@ class LabelStateBinarySensor(BinarySensorEntity):
 
         await super().async_added_to_hass()
 
+        label_reg = lr.async_get(self.hass)
+        label_entry = label_reg.async_get_label(self._label_id)
+        if label_entry is not None:
+            self._label_name = label_entry.name
+
         ent_reg = er.async_get(self.hass)
-        entries = er.async_entries_for_label(ent_reg, self._label)
+        entries = er.async_entries_for_label(ent_reg, self._label_id)
 
         for entity_entry in entries:
             if entity_entry.entity_id == self.entity_id:
@@ -165,10 +179,10 @@ class LabelStateBinarySensor(BinarySensorEntity):
                 )
                 continue
             for label in entity_entry.labels:
-                if label == self._label:
+                if label == self._label_id:
                     LOGGER.debug(
                         "Found label %s in entity %s",
-                        self._label,
+                        self._label_id,
                         entity_entry.entity_id,
                     )
 
@@ -183,7 +197,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
                         },
                     )
 
-                    if entity_entry and self._label in entity_entry.labels:
+                    if entity_entry and self._label_id in entity_entry.labels:
                         self._async_state_listener(state_event, update_state=False)
 
                     self.async_on_remove(
@@ -196,6 +210,13 @@ class LabelStateBinarySensor(BinarySensorEntity):
 
         self.async_on_remove(
             self.hass.bus.async_listen(
+                EVENT_LABEL_REGISTRY_UPDATED,
+                self._async_label_registry_modified,
+            )
+        )
+
+        self.async_on_remove(
+            self.hass.bus.async_listen(
                 EVENT_ENTITY_REGISTRY_UPDATED,
                 self._async_entity_registry_modified,
             )
@@ -203,6 +224,22 @@ class LabelStateBinarySensor(BinarySensorEntity):
 
         self._calc_state()
         self.async_write_ha_state()
+
+    @callback
+    def _async_label_registry_modified(
+        self, event: Event[lr.EventLabelRegistryUpdatedData]
+    ) -> None:
+        """Handle label registry update."""
+        data = event.data
+        if data["action"] == "update" and data["label_id"] == self._label_id:
+            # Get the label, update the name
+            label_reg = lr.async_get(self.hass)
+            label_entry = label_reg.async_get_label(self._label_id)
+            if label_entry is not None:
+                self._label_name = label_entry.name
+
+            self._calc_state()
+            self.async_write_ha_state()
 
     @callback
     def _async_entity_registry_modified(
@@ -215,7 +252,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
             entity_registry = er.async_get(self.hass)
             entity_entry = entity_registry.async_get(data["entity_id"])
 
-            if entity_entry and self._label in entity_entry.labels:
+            if entity_entry and self._label_id in entity_entry.labels:
                 if entity_entry.entity_id == self.entity_id:
                     LOGGER.debug(
                         "We don't watch ourself %s",
@@ -232,7 +269,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
                     )
                     LOGGER.debug(
                         "Found label %s in entity %s",
-                        self._label,
+                        self._label_id,
                         entity_entry.entity_id,
                     )
 
@@ -273,7 +310,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
             for entity_id in self._state_dict.keys():
                 # Check if the state still has the label
                 entity_entry = entity_registry.async_get(entity_id)
-                if entity_entry and self._label in entity_entry.labels:
+                if entity_entry and self._label_id in entity_entry.labels:
                     entity_state = self._state_dict[entity_id]
 
                     if (
@@ -290,7 +327,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
             for entity_id in self._state_dict.keys():
                 # Check if the state still has the label
                 entity_entry = entity_registry.async_get(entity_id)
-                if entity_entry and self._label in entity_entry.labels:
+                if entity_entry and self._label_id in entity_entry.labels:
                     entity_state = self._state_dict[entity_id]
 
                     if (
@@ -307,7 +344,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
             for entity_id in self._state_dict.keys():
                 # Check if the state still has the label
                 entity_entry = entity_registry.async_get(entity_id)
-                if entity_entry and self._label in entity_entry.labels:
+                if entity_entry and self._label_id in entity_entry.labels:
                     entity_state = self._state_dict[entity_id]
 
                     try:
@@ -384,6 +421,7 @@ class LabelStateBinarySensor(BinarySensorEntity):
         self._attr_is_on = state_is_on
         self._attr_extra_state_attributes[ATTR_ENTITIES] = entities_on
         self._attr_extra_state_attributes[ATTR_ENTITY_NAMES] = entity_names
+        self._attr_extra_state_attributes[ATTR_LABEL_NAME] = self._label_name
 
     def _get_device_or_entity_name(
         self,

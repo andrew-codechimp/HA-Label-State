@@ -8,17 +8,17 @@ from __future__ import annotations
 
 from awesomeversion.awesomeversion import AwesomeVersion
 
-from homeassistant.core import HomeAssistant
-from homeassistant.const import __version__ as HA_VERSION  # noqa: N812
-from homeassistant.helpers import config_validation as cv
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import __version__ as HA_VERSION  # noqa: N812
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
     DOMAIN,
     LOGGER,
-    PLATFORMS,
     MIN_HA_VERSION,
+    PLATFORMS,
 )
 
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)

@@ -6,6 +6,68 @@
             "type": "shell",
             "command": "scripts/develop",
             "problemMatcher": []
+        },
+        {
+            "label": "Lint: All",
+            "type": "shell",
+            "command": "scripts/lint",
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Lint: Ruff Check",
+            "type": "shell",
+            "command": "uv run ruff check .",
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "Lint: Ruff Check & Fix",
+            "type": "shell",
+            "command": "uv run ruff check . --fix",
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "Lint: Ruff Format",
+            "type": "shell",
+            "command": "uv run ruff format .",
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "Lint: MyPy",
+            "type": "shell",
+            "command": "uv run mypy",
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "Test: All",
+            "type": "shell",
+            "command": "uv run pytest",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Test: Verbose",
+            "type": "shell",
+            "command": "uv run pytest -v",
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "Test: Coverage",
+            "type": "shell",
+            "command": "uv run pytest --cov=custom_components.label_state --cov-report=term-missing",
+            "group": "test",
+            "problemMatcher": []
         }
     ],
     "configurations": [

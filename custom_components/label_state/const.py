@@ -32,6 +32,7 @@ CONF_STATE_UPPER_LIMIT = "state_upper_limit"
 
 ATTR_ENTITIES = "entities"
 ATTR_ENTITY_NAMES = "entity_names"
+ATTR_LABEL_NAME = "label_name"
 
 
 class StateTypes(StrEnum):
