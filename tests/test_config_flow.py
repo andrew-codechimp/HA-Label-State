@@ -6,18 +6,18 @@ from unittest.mock import AsyncMock
 
 import pytest
 from custom_components.label_state.const import (
-    DOMAIN,
     CONF_LABEL,
-    CONF_STATE_TO,
-    CONF_STATE_NOT,
-    CONF_STATE_TYPE,
     CONF_STATE_LOWER_LIMIT,
+    CONF_STATE_NOT,
+    CONF_STATE_TO,
+    CONF_STATE_TYPE,
     CONF_STATE_UPPER_LIMIT,
+    DOMAIN,
 )
 
 from homeassistant import config_entries
-from homeassistant.core import HomeAssistant
 from homeassistant.const import CONF_NAME
+from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 
 

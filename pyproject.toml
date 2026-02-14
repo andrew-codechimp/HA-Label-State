@@ -28,11 +28,12 @@ Changelog = "https://github.com/andrew-codechimp/HA-Label-State/releases"
 [dependency-groups]
 dev = [
     "colorlog",
-    "homeassistant==2025.4.0",
+    "homeassistant==2025.11.0",
     "mypy",
     "pygments",
     "pytest-homeassistant-custom-component",
     "ruff",
+    "pycares<5.0.0",
 ]
 
 [tool.uv]
@@ -109,7 +110,7 @@ ignore = [
 max-complexity = 25
 
 [tool.ruff.lint.isort]
-length-sort = true
+length-sort = false
 section-order = [
   "future",
   "standard-library",

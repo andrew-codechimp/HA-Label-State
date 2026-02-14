@@ -5,13 +5,13 @@ from __future__ import annotations
 from custom_components.label_state.const import DOMAIN
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
+from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import (
-    label_registry as lr,
     device_registry as dr,
     entity_registry as er,
+    label_registry as lr,
 )
-from homeassistant.config_entries import ConfigEntryState
 
 from .const import DEFAULT_NAME
 

@@ -9,7 +9,7 @@ from homeassistant.const import Platform
 
 LOGGER: Logger = getLogger(__package__)
 
-MIN_HA_VERSION = "2025.4"
+MIN_HA_VERSION = "2025.11"
 
 manifestfile = Path(__file__).parent / "manifest.json"
 with open(file=manifestfile, encoding="UTF-8") as json_file:
@@ -32,6 +32,7 @@ CONF_STATE_UPPER_LIMIT = "state_upper_limit"
 
 ATTR_ENTITIES = "entities"
 ATTR_ENTITY_NAMES = "entity_names"
+ATTR_LABEL_NAME = "label_name"
 
 
 class StateTypes(StrEnum):
