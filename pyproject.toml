@@ -33,7 +33,7 @@ dev = [
     "pygments",
     "pytest-homeassistant-custom-component",
     "ruff",
-    "pycares<5.0.0",
+    "pycares<5.0.2",
 ]
 
 [tool.uv]
