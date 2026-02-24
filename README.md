@@ -1,4 +1,4 @@
-# HA-Label-State
+# Label State
 
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
