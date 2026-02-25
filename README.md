@@ -89,6 +89,47 @@ actions:
 mode: single
 ```
 
+### Markdown card example
+
+A markdown card you can add to dashboards showing the state of all your Label State sensors, thanks [@bcjmk](https://github.com/bcjmk)
+
+![Markdown Card](https://raw.githubusercontent.com/andrew-codechimp/ha-label-state/main/images/markdown-card-example.png "Markdown Card")
+
+```yaml
+{%- set integration_name = 'label_state' %}
+{%- set binary_sensors = integration_entities(integration_name) | select('match', '^binary_sensor\.') | list %}
+
+# {{ integration_name.replace('_', ' ').title() }} Status
+
+{%- if binary_sensors %}
+Items to check: {{ binary_sensors | count }}
+
+{%- for sensor in binary_sensors %}
+{%- set label_name = state_attr(sensor, 'label_name') %}
+{%- set monitored_entities = label_entities(label_name) %}
+{%- set problem_ids = state_attr(sensor, 'entities') or [] %}
+{%- set sensor_state = states(sensor) %}
+<details>
+<summary><b>{{ state_attr(sensor, 'friendly_name') or sensor }}</b> &mdash; {% if sensor_state == 'off' %}✅ All OK{% elif sensor_state == 'on' %}⚠️ ALERT{% else %}❓ {{ sensor_state }}{% endif %}</summary>
+
+**Monitored Entities:**
+{%- if monitored_entities %}
+{%- for entity in monitored_entities %}
+- {% if entity in problem_ids %}⚠️ {% endif %}[{{ state_attr(entity, 'friendly_name') or entity }}](/history?entity_id={{ entity }}) ({{ states(entity) }})
+{%- endfor %}
+{%- else %}
+- ❓ No entities found with label '{{ label_name }}'
+{%- endif %}
+
+</details>
+
+{%- endfor %}
+{%- else %}
+❓ No binary sensors found for the integration '{{ integration_name }}'.
+{%- endif %}
+```
+
+
 ### Translations
 
 You can help by adding missing translations when you are a native speaker. Or add a complete new language when there is no language file available.
