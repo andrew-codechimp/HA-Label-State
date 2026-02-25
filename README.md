@@ -62,6 +62,8 @@ A new Label State helper will be available within Settings/Helpers or click the 
 
 Label State can only monitor labels assigned to entities as it needs to know what entity in particular you want to monitor, since devices have many entities that could be switches/values it cannot automatically determine which you want to monitor. It will ignore labels added to anything but an entity.
 
+### Notification example
+
 Use the example below to create a notification automation listing the entities using the state_attr, replace the binary sensor with your own.  
 I like to have the trigger only activate if a labelled sensor has been unavailable for 5 minutes to avoid any planned restarts falsely triggering the automation.
 
