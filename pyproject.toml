@@ -89,6 +89,7 @@ ignore = [
   "TC006",   # Add quotes to type expression in typing.cast()
   "TRY003",  # Avoid specifying long messages outside the exception class
   "TRY400",  # Use `logging.exception` instead of `logging.error`
+  "CPY001",  # Missing copyright notice at top of file
 
   # Todo
   "ANN001",  # Missing type annotation for function argument
@@ -103,6 +104,7 @@ ignore = [
   "SIM118",  # Use `key in dict` instead
   "FBT001",  # Boolean-typed positional argument in function definition
   "FBT002",  # Boolean default positional argument in function definition
+  "PLR0917", # Too many positional arguments (8 > 5)
 ]
 
 
