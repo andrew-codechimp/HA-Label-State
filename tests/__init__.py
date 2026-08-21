@@ -1,9 +1,13 @@
 """Tests for label_state integration."""
 
+from typing import TYPE_CHECKING
+
 import pytest
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from homeassistant.core import HomeAssistant
+
+if TYPE_CHECKING:
+    from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 pytestmark = pytest.mark.asyncio
 
