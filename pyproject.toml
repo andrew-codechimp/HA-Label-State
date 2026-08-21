@@ -12,10 +12,10 @@ classifiers = [
   "Framework :: AsyncIO",
   "Intended Audience :: Developers",
   "Natural Language :: English",
-  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: 3",
 ]
-requires-python = "==3.13.2"
+requires-python = "==3.14.2"
 dependencies = [] # Use dev for all dependencies
 
 [project.urls]
@@ -27,19 +27,20 @@ Changelog = "https://github.com/andrew-codechimp/HA-Label-State/releases"
 
 [dependency-groups]
 dev = [
+    "aiodns",
     "colorlog",
-    "homeassistant==2025.11.0",
+    "homeassistant==2026.4.0",
     "mypy",
+    "pycares",
     "pygments",
     "pytest-homeassistant-custom-component",
     "ruff",
-    "pycares<5.0.0",
 ]
 
 [tool.uv]
 default-groups = ["dev"]
 [tool.ruff]
-target-version = "py313"
+target-version = "py314"
 src = ["custom_components/label_state", "tests"]
 
 [tool.ruff.format]
@@ -135,7 +136,7 @@ voluptuous = "vol"
 # Specify the target platform details in config, so your developers are
 # free to run mypy on Windows, Linux, or macOS and get consistent
 # results.
-python_version = "3.13"
+python_version = "3.14"
 platform = "linux"
 
 # show error messages from unrelated files

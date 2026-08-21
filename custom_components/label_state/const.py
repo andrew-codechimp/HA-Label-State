@@ -7,7 +7,7 @@ from homeassistant.const import Platform
 
 LOGGER: Logger = getLogger(__package__)
 
-MIN_HA_VERSION = "2025.11"
+MIN_HA_VERSION = "2026.4"
 
 DOMAIN = "label_state"
 CONFIG_VERSION = 1
