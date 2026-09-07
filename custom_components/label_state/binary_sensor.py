@@ -231,15 +231,23 @@ class LabelStateBinarySensor(BinarySensorEntity):
     ) -> None:
         """Handle label registry update."""
         data = event.data
-        if data["action"] == "update" and data["label_id"] == self._label_id:
-            # Get the label, update the name
-            label_reg = lr.async_get(self.hass)
-            label_entry = label_reg.async_get_label(self._label_id)
-            if label_entry is not None:
-                self._label_name = label_entry.name
+        if data["label_id"] != self._label_id:
+            return
 
-            self._calc_state()
+        if data["action"] == "remove":
+            self._attr_available = False
             self.async_write_ha_state()
+            return
+
+        # create or update, get the label, update the name
+        label_reg = lr.async_get(self.hass)
+        label_entry = label_reg.async_get_label(self._label_id)
+        if label_entry is not None:
+            self._label_name = label_entry.name
+
+        self._attr_available = True
+        self._calc_state()
+        self.async_write_ha_state()
 
     @callback
     def _async_entity_registry_modified(
