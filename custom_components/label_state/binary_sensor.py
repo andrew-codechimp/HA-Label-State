@@ -88,7 +88,7 @@ async def async_setup_platform(
     async_add_entities: AddEntitiesCallback,
     discovery_info: DiscoveryInfoType | None = None,
 ) -> None:
-    """Set up the min/max/mean sensor."""
+    """Set up the label state sensor."""
     label: str = config[CONF_LABEL]
     name: str | None = config.get(CONF_NAME)
     state_type: str = config[CONF_STATE_TYPE]
