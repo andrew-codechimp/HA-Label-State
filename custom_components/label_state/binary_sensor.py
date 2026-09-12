@@ -5,6 +5,7 @@ from __future__ import annotations
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
+    ATTR_UNIT_OF_MEASUREMENT,
     CONF_NAME,
     CONF_UNIQUE_ID,
     STATE_UNAVAILABLE,
@@ -436,13 +437,26 @@ class LabelStateBinarySensor(BinarySensorEntity):
         entity_id: str,
     ) -> str:
         """Get the device or entity name."""
+        state = self.hass.states.get(entity_id)
+        if self._state_type == StateTypes.NUMERIC_STATE:
+            state_value = state.state if state is not None else STATE_UNKNOWN
+            unit = (
+                state.attributes.get(ATTR_UNIT_OF_MEASUREMENT)
+                if state is not None
+                else None
+            )
+            if unit:
+                state_value = f"{state_value}{unit}"
+            state_value = f" [{state_value}]"
+        else:
+            state_value = ""
         entity_registry = er.async_get(self.hass)
         entity_entry = entity_registry.async_get(entity_id)
         if not entity_entry:
-            return entity_id
+            return f"{entity_id}{state_value}"
         if entity_entry.device_id:
             device_registry = dr.async_get(self.hass)
             device_entry = device_registry.async_get(device_id=entity_entry.device_id)
             if device_entry is not None:
-                return f"{device_entry.name_by_user or device_entry.name} ({entity_entry.name or entity_entry.original_name or entity_id})"
-        return entity_entry.name or entity_entry.original_name or entity_id
+                return f"{device_entry.name_by_user or device_entry.name} ({entity_entry.name or entity_entry.original_name or entity_id}){state_value}"
+        return f"{entity_entry.name or entity_entry.original_name or entity_id}{state_value}"
