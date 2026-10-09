@@ -118,7 +118,7 @@ async def async_setup_platform(
 class LabelStateBinarySensor(BinarySensorEntity):
     """Representation of a Label State sensor."""
 
-    _attr_icon = "mdi:tag"
+    _attr_icon = "mdi:label"
     _attr_should_poll = False
 
     _state_dict: dict[str, str] = {}

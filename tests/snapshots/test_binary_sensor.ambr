@@ -25,7 +25,7 @@
     'options': dict({
     }),
     'original_device_class': None,
-    'original_icon': 'mdi:tag',
+    'original_icon': 'mdi:label',
     'original_name': 'My Label State',
     'platform': 'label_state',
     'previous_unique_id': None,
@@ -46,7 +46,7 @@
         'Source',
       ]),
       'friendly_name': 'My Label State',
-      'icon': 'mdi:tag',
+      'icon': 'mdi:label',
       'label_name': 'test',
     }),
     'context': <ANY>,
