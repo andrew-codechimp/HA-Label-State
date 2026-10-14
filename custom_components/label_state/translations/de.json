@@ -21,6 +21,12 @@
                     "name": "Name",
                     "state_lower_limit": "Lower bound",
                     "state_upper_limit": "Upper bound"
+                },
+                "data_description": {
+                    "label": "Select the label assigned to the entities to monitor. Labels assigned to devices or areas are ignored.",
+                    "name": "Name of the binary sensor to create.",
+                    "state_lower_limit": "Turn on when any monitored entity has a numeric state below this value. Set at least one bound; values equal to the bound do not trigger the sensor.",
+                    "state_upper_limit": "Turn on when any monitored entity has a numeric state above this value. Set at least one bound; values equal to the bound do not trigger the sensor."
                 }
             },
             "state": {
@@ -30,6 +36,11 @@
                     "label": "Label",
                     "name": "Name",
                     "state_to": "Is"
+                },
+                "data_description": {
+                    "label": "Select the label assigned to the entities to monitor. Labels assigned to devices or areas are ignored.",
+                    "name": "Name of the binary sensor to create.",
+                    "state_to": "Turn on when any monitored entity matches this state. Select a state or enter a custom state. Matching is case-insensitive."
                 }
             },
             "state_not": {
@@ -39,6 +50,11 @@
                     "label": "Label",
                     "name": "Name",
                     "state_not": "Not"
+                },
+                "data_description": {
+                    "label": "Select the label assigned to the entities to monitor. Labels assigned to devices or areas are ignored.",
+                    "name": "Name of the binary sensor to create.",
+                    "state_not": "Turn on when any monitored entity differs from this state, including unknown or unavailable states. Select a state or enter a custom state. Matching is case-insensitive."
                 }
             }
         }
@@ -55,6 +71,11 @@
                     "label": "Label",
                     "state_lower_limit": "Lower bound",
                     "state_upper_limit": "Upper bound"
+                },
+                "data_description": {
+                    "label": "Select the label assigned to the entities to monitor. Labels assigned to devices or areas are ignored.",
+                    "state_lower_limit": "Turn on when any monitored entity has a numeric state below this value. Set at least one bound; values equal to the bound do not trigger the sensor.",
+                    "state_upper_limit": "Turn on when any monitored entity has a numeric state above this value. Set at least one bound; values equal to the bound do not trigger the sensor."
                 }
             },
             "state": {
@@ -63,6 +84,10 @@
                 "data": {
                     "label": "Label",
                     "state_to": "Is"
+                },
+                "data_description": {
+                    "label": "Select the label assigned to the entities to monitor. Labels assigned to devices or areas are ignored.",
+                    "state_to": "Turn on when any monitored entity matches this state. Select a state or enter a custom state. Matching is case-insensitive."
                 }
             },
             "state_not": {
@@ -71,6 +96,10 @@
                 "data": {
                     "label": "Label",
                     "state_not": "Not"
+                },
+                "data_description": {
+                    "label": "Select the label assigned to the entities to monitor. Labels assigned to devices or areas are ignored.",
+                    "state_not": "Turn on when any monitored entity differs from this state, including unknown or unavailable states. Select a state or enter a custom state. Matching is case-insensitive."
                 }
             }
         }
