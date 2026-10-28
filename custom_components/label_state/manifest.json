@@ -1,6 +1,7 @@
 {
   "domain": "label_state",
   "name": "Label State",
+  "categories": [ "helpers" ],
   "codeowners": [
     "@andrew-codechimp"
   ],
