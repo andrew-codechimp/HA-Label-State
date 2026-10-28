@@ -20,7 +20,8 @@ An `entity_names` attribute is available which lists either the device (entity) 
 - Create a `must be on` label and create a Not State type Label State helper which turns on when any of those entities goes to any state but on so you can get a notification.
 - If you have appliances which should always draw a certain wattage create a Numeric State type Label State helper to turn on when any of those devices starts drawing 0 watts, triggering a notification.
 
-_Please :star: this repo if you find it useful_  
+_Please ⭐ this repo on [GitHub][repository] if you find it useful_
+
 _If you want to show your support please_
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png)](https://www.buymeacoffee.com/codechimp)
@@ -167,6 +168,7 @@ Create an [Issue](https://github.com/andrew-codechimp/HA-Label-State/issues/) re
 
 ---
 
+[repository]: https://github.com/andrew-codechimp/HA-Label-State
 [commits-shield]: https://img.shields.io/github/commit-activity/y/andrew-codechimp/HA-Label-State.svg?style=for-the-badge
 [commits]: https://github.com/andrew-codechimp/HA-Label-State/commits/main
 [hacs]: https://github.com/hacs/integration
