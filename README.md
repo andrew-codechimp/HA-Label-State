@@ -30,28 +30,15 @@ _If you want to show your support please_
 
 ![Helper Numeric](https://raw.githubusercontent.com/andrew-codechimp/ha-label-state/main/images/label_state_numeric.png "Helper Label Numeric State")
 
-## Installation
-
-### HACS
+## Marketplace/HACS Installation
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=andrew-codechimp&repository=HA-Label-State&category=Integration)
 
-Restart Home Assistant
+Or search for Label State within Marketplace/HACS if My Home Assistant does not work for you
+
+Restart Home Assistant if using HACS
 
 In the HA UI go to "Configuration" -> "Devices & services" -> "Helpers" click "+" and select "Label State"
-
-### Manual Installation
-
-<details>
-<summary>Show detailed instructions</summary>
-
-Installation via HACS is recommended, but a manual setup is supported.
-
-1. Manually copy custom_components/label_state folder from latest release to custom_components folder in your config folder.
-1. Restart Home Assistant.
-1. In the HA UI go to "Configuration" -> "Devices & services" -> "Helpers" click "+" and select "Label State"
-
-</details>
 
 ## Usage
 
