@@ -113,12 +113,12 @@ Items to check: {{ binary_sensors | count }}
 {%- set problem_ids = state_attr(sensor, 'entities') or [] %}
 {%- set sensor_state = states(sensor) %}
 <details>
-<summary><b>{{ state_attr(sensor, 'friendly_name') or sensor }}</b> &mdash; {% if sensor_state == 'off' %}✅ All OK{% elif sensor_state == 'on' %}⚠️ ALERT{% else %}❓ {{ sensor_state }}{% endif %}</summary>
+<summary><b>{{ states[sensor].name or sensor }}</b> &mdash; {% if sensor_state == 'off' %}✅ All OK{% elif sensor_state == 'on' %}⚠️ ALERT{% else %}❓ {{ sensor_state }}{% endif %}</summary>
 
 **Monitored Entities:**
 {%- if monitored_entities %}
 {%- for entity in monitored_entities %}
-- {% if entity in problem_ids %}⚠️ {% endif %}[{{ state_attr(entity, 'friendly_name') or entity }}](/history?entity_id={{ entity }}) ({{ states(entity) }})
+- {% if entity in problem_ids %}⚠️ {% endif %}[{{ states[entity].name or entity }}](/history?entity_id={{ entity }}) ({{ states(entity) }})
 {%- endfor %}
 {%- else %}
 - ❓ No entities found with label '{{ label_name }}'
