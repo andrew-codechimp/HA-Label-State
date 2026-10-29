@@ -45,8 +45,8 @@
       'entity_names': list([
         'Source',
       ]),
-      'friendly_name': 'My Label State',
-      'icon': 'mdi:label',
+      <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'My Label State',
+      <EntityStateAttribute.ICON: 'icon'>: 'mdi:label',
       'label_name': 'test',
     }),
     'context': <ANY>,

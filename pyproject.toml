@@ -27,13 +27,9 @@ Changelog = "https://github.com/andrew-codechimp/HA-Label-State/releases"
 
 [dependency-groups]
 dev = [
-    "aiodns",
-    "colorlog",
-    "homeassistant==2026.4.0",
+    "homeassistant==2026.8.0",
     "mypy",
-    "pycares",
-    "pygments",
-    "pytest-homeassistant-custom-component",
+    "pytest-homeassistant-custom-component==0.13.354",
     "ruff",
 ]
 
