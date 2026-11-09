@@ -1,12 +1,14 @@
+<!-- ha-marketplace:exclude-start -->
 # Label State
 
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
 [![Downloads][download-latest-shield]]()
-[![HACS Installs][hacs-installs-shield]]()
+[![Installs][marketplace-installs-shield]][hacs-install]
+[![marketplace][marketplacebadge]][marketplace]
 [![License][license-shield]](LICENSE)
-[![hacs][hacsbadge]][hacs]
 
+<!-- ha-marketplace:exclude-end -->
 Label State Helpers for Home Assistant
 
 You can create state, not state and numeric state helpers which provide a binary sensor that turns on if any entity with an assigned label matches the criteria you specify.
@@ -30,6 +32,7 @@ _If you want to show your support please_
 
 ![Helper Numeric](https://raw.githubusercontent.com/andrew-codechimp/ha-label-state/main/images/label_state_numeric.png "Helper Label Numeric State")
 
+<!-- ha-marketplace:exclude-start -->
 ## Marketplace/HACS Installation
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=andrew-codechimp&repository=HA-Label-State&category=Integration)
@@ -39,6 +42,7 @@ Or search for Label State within Marketplace/HACS if My Home Assistant does not 
 Restart Home Assistant if using HACS
 
 In the HA UI go to "Configuration" -> "Devices & services" -> "Helpers" click "+" and select "Label State"
+<!-- ha-marketplace:exclude-end -->
 
 ## Usage
 
@@ -158,11 +162,12 @@ Create an [Issue](https://github.com/andrew-codechimp/HA-Label-State/issues/) re
 [repository]: https://github.com/andrew-codechimp/HA-Label-State
 [commits-shield]: https://img.shields.io/github/commit-activity/y/andrew-codechimp/HA-Label-State.svg?style=for-the-badge
 [commits]: https://github.com/andrew-codechimp/HA-Label-State/commits/main
-[hacs]: https://github.com/hacs/integration
-[hacsbadge]: https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge
-[exampleimg]: example.png
 [license-shield]: https://img.shields.io/github/license/andrew-codechimp/HA-Label-State.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/andrew-codechimp/HA-Label-State.svg?style=for-the-badge
 [releases]: https://github.com/andrew-codechimp/HA-Label-State/releases
 [download-latest-shield]: https://img.shields.io/github/downloads/andrew-codechimp/HA-Label-State/latest/total?style=for-the-badge
-[hacs-installs-shield]: https://img.shields.io/endpoint.svg?url=https%3A%2F%2Flauwbier.nl%2Fhacs%2Flabel_state&style=for-the-badge
+[marketplace-installs-shield]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fanalytics.home-assistant.io%2Fcustom_integrations.json&query=%24.label_state.total&style=for-the-badge&label=Marketplace%20installs
+[marketplace-install]: https://my.home-assistant.io/redirect/marketplace_repository/?owner=andrew-codechimp&repository=label_state&category=integration
+[hacs-install]: https://my.home-assistant.io/redirect/hacs_repository/?owner=andrew-codechimp&repository=HA-Label-State&category=Integration
+[marketplace]: https://home-assistant.io/integrations/marketplace
+[marketplacebadge]: https://img.shields.io/badge/Marketplace-Default-41BDF5.svg?style=for-the-badge
