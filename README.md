@@ -35,7 +35,7 @@ _If you want to show your support please_
 <!-- ha-marketplace:exclude-start -->
 ## Marketplace/HACS Installation
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=andrew-codechimp&repository=HA-Label-State&category=Integration)
+[![Open your Home Assistant instance and open a repository in the Marketplace.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=andrew-codechimp&repository=HA-Label-State&category=Integration)
 
 Or search for Label State within Marketplace/HACS if My Home Assistant does not work for you
 
